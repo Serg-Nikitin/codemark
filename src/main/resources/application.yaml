@@ -1,6 +1,10 @@
 spring:
   datasource:
-    driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/codemark
     username: postgres
     password: postgres
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:create_schema.sql
+      data-locations: classpath:insert_data.sql
