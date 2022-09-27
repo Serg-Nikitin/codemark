@@ -13,7 +13,10 @@ VALUES ('al', 'Alex', 'alex'),
 ;
 
 INSERT INTO role(role_name, user_login)
-VALUES ('LEAD', 'al'),
+VALUES ('EMPLOYEE', 'al'),
+       ('EMPLOYEE', 'yu'),
+       ('EMPLOYEE', 'ru'),
+       ('LEAD', 'al'),
        ('OPERATOR', 'yu'),
        ('ADMIN', 'yu'),
        ('ANALYST', 'al'),

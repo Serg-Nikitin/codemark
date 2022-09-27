@@ -8,3 +8,10 @@ spring:
       mode: always
       schema-locations: classpath:create_schema.sql
       data-locations: classpath:insert_data.sql
+  jpa:
+    show-sql: true
+    open-in-view: false
+#For Answer
+logging:
+  level:
+    root: WARN
