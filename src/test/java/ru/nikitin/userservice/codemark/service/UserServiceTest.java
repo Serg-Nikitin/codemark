@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.nikitin.userservice.codemark.model.User;
+import ru.nikitin.userservice.codemark.to.UserTo;
 import ru.nikitin.userservice.codemark.utill.exception.NotFoundException;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -35,6 +36,8 @@ class UserServiceTest {
         USER_MATCHER.assertMatch(newUser, createUser);
     }
 
+
+
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     void update() {
@@ -54,5 +57,11 @@ class UserServiceTest {
     void deleteUser() {
         service.deleteUser("al");
         assertThrows(NotFoundException.class, () -> service.getUser("al"));
+    }
+
+    @Test
+    void getUserWithRole() {
+        UserTo userTo = service.getUserWithRole("al");
+        System.out.println(userTo);
     }
 }

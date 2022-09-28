@@ -28,8 +28,8 @@ public class Role {
         this.user = user;
     }
 
-    public RoleName getRole_name() {
-        return role_name;
+    public String getRoleName() {
+        return role_name.name();
     }
 
     public void setRole_name(RoleName role_name) {

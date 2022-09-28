@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.nikitin.userservice.codemark.model.User;
 import ru.nikitin.userservice.codemark.repository.UserRepository;
+import ru.nikitin.userservice.codemark.to.UserTo;
 import ru.nikitin.userservice.codemark.utill.exception.NotFoundException;
 
 import java.util.List;
@@ -65,6 +66,11 @@ public class UserService {
         return userRepository
                 .getUserByLogin(login)
                 .orElseThrow(() -> new NotFoundException(String.format(NOT_FOUND, login)));
+    }
+
+
+    public UserTo getUserWithRole(String login) {
+       return userRepository.getRolesWithUser(login).createUserTo();
     }
 
 
