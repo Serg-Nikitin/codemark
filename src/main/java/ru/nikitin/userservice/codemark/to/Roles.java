@@ -29,11 +29,13 @@ public class Roles implements Streamable<Role> {
 
     @Override
     public Iterator<Role> iterator() {
-        return stream().iterator();
+        return streamable.iterator();
     }
 
     public UserTo createUserTo() {
-        return streamable.stream().collect(RolesCollector.getUserTo());
+        return streamable
+                .stream()
+                .collect(RolesCollector.getUserTo());
     }
 
     static class RolesCollector implements Collector<Role, HashMap<User, Set<String>>, UserTo> {
@@ -51,13 +53,13 @@ public class Roles implements Streamable<Role> {
         public BiConsumer<HashMap<User, Set<String>>, Role> accumulator() {
             return (map, role) -> {
                 map.putIfAbsent(role.getUser(), new HashSet<>());
-                map.get(role.getUser()).add(role.getRoleName());
+                map.get(role.getUser()).add(role.getRole_name());
             };
         }
 
         @Override
         public BinaryOperator<HashMap<User, Set<String>>> combiner() {
-            return (map, map2)->map;
+            return (map, map2) -> map;
         }
 
         @Override

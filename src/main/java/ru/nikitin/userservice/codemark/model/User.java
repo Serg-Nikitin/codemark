@@ -1,13 +1,17 @@
 package ru.nikitin.userservice.codemark.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import org.springframework.data.domain.Persistable;
+import ru.nikitin.userservice.codemark.to.UserTo;
+
+import javax.persistence.*;
+import java.util.Collection;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements Persistable<String> {
 
     @Id
     private String login;
@@ -15,6 +19,9 @@ public class User {
     private String name;
 
     private String password;
+
+    @Transient
+    private Boolean isNew = true;
 
     public User() {
     }
@@ -71,80 +78,30 @@ public class User {
         this.password = password;
     }
 
-
-    /*  @OneToMany
-    private Set<Role> roles;
-
-    public User() {
+    public UserTo getUserTo(Collection<Role> set) {
+        return new UserTo(this, getStrings(set));
     }
 
-    public User(String login, String name, String password, Role role, Role... roles) {
-        this(login, name, password, EnumSet.of(role, roles));
-    }
-
-    public User(String login, String name, String password, Collection<Role> roles) {
-        this.login = login;
-        this.name = name;
-        this.password = password;
-        setRoles(roles);
-    }
-
-    public User(String login, String name, String password) {
-        this(login, name, password, Role.EMPLOYEE);
-    }
-
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Collection<Role> roles) {
-        this.roles = CollectionUtils.isEmpty(roles) ? EnumSet.noneOf(Role.class) : EnumSet.copyOf(roles);
+    private static Set<String> getStrings(Collection<Role> setRoles) {
+        return setRoles
+                .stream()
+                .map(Role::getRole_name)
+                .collect(Collectors.toSet());
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User)) return false;
-        User user = (User) o;
-        return login.equals(user.login) && name.equals(user.name) && password.equals(user.password) && roles.equals(user.roles);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(login, name, password, roles);
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "login='" + login + '\'' +
-                ", name='" + name + '\'' +
-                ", password='" + password + '\'' +
-                ", roles=" + roles +
-                '}';
-    }
-
-    public String getLogin() {
+    public String getId() {
         return login;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    @Override
+    public boolean isNew() {
+        return isNew;
     }
 
-    public String getName() {
-        return name;
+    @PrePersist
+    @PostLoad
+    void markNotNew() {
+        this.isNew = false;
     }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }*/
 }

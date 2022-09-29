@@ -1,38 +1,40 @@
 package ru.nikitin.userservice.codemark.model;
 
+import org.springframework.data.domain.Persistable;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "role")
-public class Role {
+@IdClass(RolePK.class)
+public class Role implements Persistable<RolePK> {
 
-    private static final int START_SEQ = 50000;
+    @Transient
+    private boolean isNew = true;
 
     @Id
-    @SequenceGenerator(name = "role_seq", sequenceName = "rol_seq", allocationSize = 1, initialValue = START_SEQ)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "role_seq")
-    private Integer id;
+    private String role_name;
 
-    @Enumerated(value = EnumType.STRING)
-    private RoleName role_name;
-
+    @Id
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumns({
+            @JoinColumn(name = "user_login", referencedColumnName = "login")})
     private User user;
+
 
     public Role() {
     }
 
-    public Role(Integer id, RoleName role_name, User user) {
-        this.id = id;
+    public Role(String role_name, User user) {
         this.role_name = role_name;
         this.user = user;
     }
 
-    public String getRoleName() {
-        return role_name.name();
+    public String getRole_name() {
+        return role_name;
     }
 
-    public void setRole_name(RoleName role_name) {
+    public void setRole_name(String role_name) {
         this.role_name = role_name;
     }
 
@@ -44,11 +46,27 @@ public class Role {
         this.user = user;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    @Override
+    public String toString() {
+        return "Role{" +
+                "role_name='" + role_name + '\'' +
+                ", user=" + user +
+                '}';
     }
 
-    public Integer getId() {
-        return id;
+    @Override
+    public RolePK getId() {
+        return new RolePK(role_name, user);
+    }
+
+    @PrePersist
+    @PostLoad
+    void markNotNew() {
+        this.isNew = false;
+    }
+
+    @Override
+    public boolean isNew() {
+        return isNew;
     }
 }
