@@ -17,11 +17,16 @@ public class UserTo {
     private String password;
     private Set<String> roles;
 
-    public UserTo(String login, String name, String password) {
-        this.login = login;
-        this.name = name;
-        this.password = password;
+    public UserTo(User user) {
+        this(user.getLogin(), user.getName(), user.getPassword());
+    }
 
+    public UserTo(String login, String name, String password) {
+        this(login, name, password, Collections.emptySet());
+    }
+
+    public UserTo(User user, Set<String> strings) {
+        this(user.getLogin(), user.getName(), user.getPassword(), strings);
     }
 
     public UserTo(String login, String name, String password, Set<String> roles) {
@@ -29,11 +34,6 @@ public class UserTo {
         this.name = name;
         this.password = password;
         this.roles = roles;
-    }
-
-
-    public UserTo(User user, Set<String> strings) {
-        this(user.getLogin(), user.getName(), user.getPassword(), strings);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class UserTo {
         User user = new User(login, name, password);
         Set<Role> setRole;
         try {
-            setRole = roles != null ? Collections.emptySet() :
+            setRole = roles.isEmpty() ? Collections.emptySet() :
                     roles.stream()
                             .map(RoleName::valueOf)
                             .map(role -> new Role(role.name(), user))

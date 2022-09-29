@@ -4,6 +4,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import ru.nikitin.userservice.codemark.model.Role;
 import ru.nikitin.userservice.codemark.model.RoleName;
 import ru.nikitin.userservice.codemark.model.User;
@@ -72,16 +73,18 @@ public class UserService {
      */
     @Transactional
     public UserTo create(UserTo userTo) {
+        Assert.notNull(userTo, "when create user, userTo must not be null");
         Pair<User, Set<Role>> pair = userTo.getUserWithSetRole();
         User user = pair.getFirst();
         Set<Role> set = pair.getSecond();
-        userRepository.save(user);
 
         if (set.isEmpty()) {
-            set.add(new Role(RoleName.EMPLOYEE.name(), user));
+            Role role = new Role(RoleName.EMPLOYEE.name(), user);
+            roleRepository.save(role);
+            set = Set.of(role);
+        } else {
+            roleRepository.saveAll(set);
         }
-
-        roleRepository.saveAll(set);
         return user.getUserTo(set);
     }
 
@@ -97,18 +100,30 @@ public class UserService {
      */
     @Transactional
     public UserTo update(String login, UserTo userTo) {
+        Assert.notNull(userTo, "when update user, userTo must not be null");
+
         Pair<User, Set<Role>> pair = userTo.getUserWithSetRole();
         User user = pair.getFirst();
         if (!login.equals(user.getLogin())) {
             throw new CustomLoginException("This login must be equals user.login");
         }
         Set<Role> inPutSet = pair.getSecond();
+
+        /* the user exists in the database so isNew must be false*/
+        user.setIsNew();
         if (inPutSet.isEmpty()) {
             userRepository.save(user);
         } else {
-            deleteUser(login);
+            deleteUser(user.getLogin());
             roleRepository.saveAll(inPutSet);
         }
         return user.getUserTo(inPutSet);
+    }
+
+    public UserTo getUser(String login) {
+        return userRepository
+                .findById(login)
+                .orElseThrow(() -> new NotFoundException(String.format(NOT_FOUND, login)))
+                .getUserTo(Set.of());
     }
 }

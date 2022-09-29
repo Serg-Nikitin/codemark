@@ -1,13 +1,15 @@
 package ru.nikitin.userservice.codemark.service;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataAccessException;
 import org.springframework.test.annotation.DirtiesContext;
-import ru.nikitin.userservice.codemark.model.User;
+import ru.nikitin.userservice.codemark.model.RoleName;
 import ru.nikitin.userservice.codemark.to.UserTo;
 import ru.nikitin.userservice.codemark.utill.exception.NotFoundException;
+
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static ru.nikitin.userservice.codemark.data.UserData.*;
@@ -20,36 +22,56 @@ class UserServiceTest {
     UserService service;
 
 
-    @BeforeEach
-    void init() {
-    }
-
     @Test
     void getAll() {
         USER_MATCHER.assertMatch(USERS, service.getAll());
     }
 
     @Test
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-    void create() {
-        User newUser = service.create(createUser);
-        USER_MATCHER.assertMatch(newUser, createUser);
-    }
+    void getUserWithRole() {
+        UserTo userTo = service.getUserWithRole(getAlex.getLogin());
+        UserTo userToAlex = getAlex.getUserTo(alexRoles);
+        USER_TO_MATCHER.assertMatch(userToAlex,userTo);
 
-
-
-    @Test
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-    void update() {
-        service.update("al", updated);
-        User actual = service.getUser("al");
-        USER_MATCHER.assertMatch(actual, updated);
     }
 
     @Test
-    void getUser() {
-        User actual = service.getUser("al");
-        USER_MATCHER.assertMatch(actual, getUser);
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    void createHappyPathLotOfRoles() {
+        UserTo newUser = service.create(createUserTo);
+        USER_TO_MATCHER.assertMatch(newUser, createUserTo);
+    }
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    void createHappyPathWithoutRole() {
+        UserTo created = new UserTo(createUser);
+        UserTo newUser = service.create(created);
+        created.setRoles(Set.of(RoleName.EMPLOYEE.name()));
+        USER_TO_MATCHER.assertMatch(newUser, created);
+    }
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    void updateHappyPathWithoutRole() {
+        UserTo update = new UserTo(updated);
+        UserTo upUser = service.update(update.getLogin(), update);
+
+        USER_TO_MATCHER.assertMatch(upUser, update);
+    }
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    void updateHappyPathLotOfRoles() {
+        UserTo update = new UserTo(updated, Set.of(RoleName.DEVELOPER.name(), RoleName.OPERATOR.name()));
+        UserTo upUser = service.update(update.getLogin(), update);
+        USER_TO_MATCHER.assertMatch(upUser, update);
+    }
+
+
+    @Test
+    void createDuplicate() {
+        assertThrows(DataAccessException.class, () -> service.create(getUserToFromAlexRoleEmployee()));
     }
 
     @Test
@@ -57,11 +79,5 @@ class UserServiceTest {
     void deleteUser() {
         service.deleteUser("al");
         assertThrows(NotFoundException.class, () -> service.getUser("al"));
-    }
-
-    @Test
-    void getUserWithRole() {
-        UserTo userTo = service.getUserWithRole("al");
-        System.out.println(userTo);
     }
 }

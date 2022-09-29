@@ -82,6 +82,7 @@ public class User implements Persistable<String> {
         return new UserTo(this, getStrings(set));
     }
 
+
     private static Set<String> getStrings(Collection<Role> setRoles) {
         return setRoles
                 .stream()
@@ -97,6 +98,10 @@ public class User implements Persistable<String> {
     @Override
     public boolean isNew() {
         return isNew;
+    }
+
+    public void setIsNew() {
+        isNew = false;
     }
 
     @PrePersist
