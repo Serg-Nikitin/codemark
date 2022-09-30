@@ -24,7 +24,7 @@ class UserServiceTest {
 
     @Test
     void getAll() {
-        USER_MATCHER.assertMatch(USERS, service.getAll());
+        USER_TO_MATCHER.assertMatch(USERS, service.getAll());
     }
 
     @Test

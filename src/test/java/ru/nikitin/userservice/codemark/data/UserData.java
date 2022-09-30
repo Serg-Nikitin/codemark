@@ -17,10 +17,10 @@ public class UserData {
     public static MatcherFactory.Matcher<UserTo> USER_TO_MATCHER = MatcherFactory.usingEqualsComparator(UserTo.class);
 
 
-    public static List<User> USERS = List.of(
-            new User("al", "Alex", "alex"),
-            new User("ru", "Ruslan", "rus"),
-            new User("yu", "Yuri", "yuri"));
+    public static List<UserTo> USERS = List.of(
+            new UserTo("al", "Alex", "alex"),
+            new UserTo("ru", "Ruslan", "rus"),
+            new UserTo("yu", "Yuri", "yuri"));
 
     public static UserTo createUserTo = new UserTo("cr", "Created", "create", Set.of(RoleName.EMPLOYEE.name(), RoleName.DEVELOPER.name()));
     public static UserTo updatedTo = new UserTo("al", "Updated", "update", Set.of(RoleName.ADMIN.name(), RoleName.DEVELOPER.name()));

@@ -24,12 +24,24 @@
             <artifactId>spring-boot-starter-web-services</artifactId>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/wsdl4j/wsdl4j -->
+        <!--        &lt;!&ndash; https://mvnrepository.com/artifact/wsdl4j/wsdl4j &ndash;&gt;-->
+        <!--        <dependency>-->
+        <!--            <groupId>wsdl4j</groupId>-->
+        <!--            <artifactId>wsdl4j</artifactId>-->
+        <!--        </dependency>-->
+
         <dependency>
-            <groupId>wsdl4j</groupId>
-            <artifactId>wsdl4j</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-spring-boot-starter-jaxws</artifactId>
+            <version>3.5.2</version>
+        </dependency>
 
 
         <dependency>

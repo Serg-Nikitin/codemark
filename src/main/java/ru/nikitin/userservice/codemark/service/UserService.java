@@ -16,6 +16,7 @@ import ru.nikitin.userservice.codemark.utill.exception.NotFoundException;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -35,8 +36,12 @@ public class UserService {
     /**
      * Get a set of users from the database (without Roles)
      */
-    public List<User> getAll() {
-        return userRepository.findAll(Sort.by("login"));
+    public List<UserTo> getAll() {
+        return userRepository
+                .findAll(Sort.by("login"))
+                .stream()
+                .map(UserTo::new)
+                .collect(Collectors.toList());
     }
 
 

@@ -21,3 +21,6 @@ spring:
 logging:
   level:
     root: INFO
+
+cxf:
+  path: /service
