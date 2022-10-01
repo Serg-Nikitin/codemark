@@ -1,24 +1,82 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="ru/nikitin/userservice/codemark"
            targetNamespace="ru/nikitin/userservice/codemark" elementFormDefault="qualified">
     <!--                 Request            -->
-    <xs:element name="getUserRequest">
+    <xs:element name="getUsersRequest"/>
+
+    <xs:element name="getUserByLoginRequest">
         <xs:complexType>
             <xs:sequence>
-                <xs:element minOccurs="0" name="login" type="xs:string"/>
-                <xs:element minOccurs="0" name="user" type="tns:user"/>
+                <xs:element name="login" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="createUserRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="user" type="tns:user"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="updateUserRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="login" type="xs:string"/>
+                <xs:element name="user" type="tns:user"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="deleteUserByLoginRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="login" type="xs:string"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
     <!--                 Request            -->
+
     <!--                 Response           -->
-    <xs:element name="getUserResponse">
+    <xs:element name="getUsersResponse">
         <xs:complexType>
             <xs:sequence>
                 <xs:element maxOccurs="unbounded" minOccurs="0" name="users" type="tns:user"/>
-                <xs:element minOccurs="0" name="deleted" type="xs:boolean"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+
+    <xs:element name="getUserByLoginResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="user" type="tns:user"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="createUserResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="user" type="tns:user"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="updateUserResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="user" type="tns:user"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="deleteUserByLoginResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="delete" type="xs:boolean"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
     <!--                 Response           -->
     <!--                 Type               -->
     <xs:complexType name="user">

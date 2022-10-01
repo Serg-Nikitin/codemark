@@ -82,7 +82,7 @@ public class UserService {
         Pair<User, Set<Role>> pair = userTo.getUserWithSetRole();
         User user = pair.getFirst();
         Set<Role> set = pair.getSecond();
-
+//todo Сделать проверку в БД для входящих данных пользователя через Set<String> logins проверка на contains , logins  кэшировать.
         if (set.isEmpty()) {
             Role role = new Role(RoleName.EMPLOYEE.name(), user);
             roleRepository.save(role);
@@ -106,7 +106,7 @@ public class UserService {
     @Transactional
     public UserTo update(String login, UserTo userTo) {
         Assert.notNull(userTo, "when update user, userTo must not be null");
-
+//todo сделать невозможным изменение логина в БД
         Pair<User, Set<Role>> pair = userTo.getUserWithSetRole();
         User user = pair.getFirst();
         if (!login.equals(user.getLogin())) {

@@ -53,7 +53,7 @@ public class UserTo extends ru.nikitin.userservice.codemark.User {
                             .map(role -> new Role(role.name(), user))
                             .collect(Collectors.toSet());
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Throws an exception when converting a String to a Enum RoleName");
+            throw new IllegalArgumentException("Throws an exception when converting a String to a Enum RoleName getUserWithSetRole");
         }
         return Pair.of(user, setRole);
     }
@@ -101,5 +101,13 @@ public class UserTo extends ru.nikitin.userservice.codemark.User {
     @Override
     public int hashCode() {
         return Objects.hash(login, name, password, roles);
+    }
+
+    public static UserTo getToFromRequest(ru.nikitin.userservice.codemark.User user) {
+        return new UserTo(
+                user.getLogin(),
+                user.getName(),
+                user.getPassword(),
+                user.getRoles());
     }
 }
