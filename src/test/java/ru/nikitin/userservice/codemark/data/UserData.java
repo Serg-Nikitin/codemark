@@ -22,8 +22,8 @@ public class UserData {
             new UserTo("ru", "Ruslan", "rus"),
             new UserTo("yu", "Yuri", "yuri"));
 
-    public static UserTo createUserTo = new UserTo("cr", "Created", "create", Set.of(RoleName.EMPLOYEE.name(), RoleName.DEVELOPER.name()));
-    public static UserTo updatedTo = new UserTo("al", "Updated", "update", Set.of(RoleName.ADMIN.name(), RoleName.DEVELOPER.name()));
+    public static UserTo createUserTo = new UserTo("cr", "Created", "create", List.of(RoleName.DEVELOPER.name(), RoleName.EMPLOYEE.name()));
+    public static UserTo updatedTo = new UserTo("al", "Updated", "update", List.of(RoleName.ADMIN.name(), RoleName.DEVELOPER.name()));
 
     public static User createUser = new User("cr", "Created", "create");
     public static User updated = new User("al", "Updated", "update");
@@ -38,7 +38,7 @@ public class UserData {
                 getAlex.getLogin(),
                 "Duplicate",
                 "duple",
-                Set.of(RoleName.EMPLOYEE.name())
+                List.of(RoleName.EMPLOYEE.name())
         );
     }
 

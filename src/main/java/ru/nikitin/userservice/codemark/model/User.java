@@ -5,8 +5,8 @@ import ru.nikitin.userservice.codemark.to.UserTo;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
@@ -83,11 +83,12 @@ public class User implements Persistable<String> {
     }
 
 
-    private static Set<String> getStrings(Collection<Role> setRoles) {
+    private static List<String> getStrings(Collection<Role> setRoles) {
         return setRoles
                 .stream()
                 .map(Role::getRole_name)
-                .collect(Collectors.toSet());
+                .sorted()
+                .collect(Collectors.toList());
     }
 
     @Override

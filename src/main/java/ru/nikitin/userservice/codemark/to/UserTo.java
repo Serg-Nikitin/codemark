@@ -6,30 +6,27 @@ import ru.nikitin.userservice.codemark.model.RoleName;
 import ru.nikitin.userservice.codemark.model.User;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class UserTo {
 
-    private String login;
-    private String name;
-    private String password;
-    private Set<String> roles;
+public class UserTo extends ru.nikitin.userservice.codemark.User {
 
     public UserTo(User user) {
         this(user.getLogin(), user.getName(), user.getPassword());
     }
 
     public UserTo(String login, String name, String password) {
-        this(login, name, password, Collections.emptySet());
+        this(login, name, password, Collections.emptyList());
     }
 
-    public UserTo(User user, Set<String> strings) {
+    public UserTo(User user, List<String> strings) {
         this(user.getLogin(), user.getName(), user.getPassword(), strings);
     }
 
-    public UserTo(String login, String name, String password, Set<String> roles) {
+    public UserTo(String login, String name, String password, List<String> roles) {
         this.login = login;
         this.name = name;
         this.password = password;
@@ -85,11 +82,11 @@ public class UserTo {
         this.password = password;
     }
 
-    public Set<String> getRoles() {
+    public List<String> getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<String> roles) {
+    public void setRoles(List<String> roles) {
         this.roles = roles;
     }
 

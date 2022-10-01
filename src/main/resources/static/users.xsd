@@ -1,0 +1,33 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="ru/nikitin/userservice/codemark"
+           targetNamespace="ru/nikitin/userservice/codemark" elementFormDefault="qualified">
+    <!--                 Request            -->
+    <xs:element name="getUserRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="login" type="xs:string"/>
+                <xs:element minOccurs="0" name="user" type="tns:user"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <!--                 Request            -->
+    <!--                 Response           -->
+    <xs:element name="getUserResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="users" type="tns:user"/>
+                <xs:element minOccurs="0" name="deleted" type="xs:boolean"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <!--                 Response           -->
+    <!--                 Type               -->
+    <xs:complexType name="user">
+        <xs:sequence>
+            <xs:element name="login" type="xs:string"/>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="password" type="xs:string"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="roles" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <!--                 Type              -->
+</xs:schema>

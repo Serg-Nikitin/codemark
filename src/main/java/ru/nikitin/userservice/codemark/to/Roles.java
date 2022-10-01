@@ -5,10 +5,7 @@ import ru.nikitin.userservice.codemark.model.Role;
 import ru.nikitin.userservice.codemark.model.User;
 import ru.nikitin.userservice.codemark.utill.exception.NotFoundException;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
@@ -66,7 +63,8 @@ public class Roles implements Streamable<Role> {
         public Function<HashMap<User, Set<String>>, UserTo> finisher() {
             return map -> {
                 User user = map.keySet().stream().findFirst().orElseThrow(() -> new NotFoundException("Streamable Roles not found user"));
-                return new UserTo(user, map.get(user));
+                List<String> list = map.get(user).stream().sorted().toList();
+                return new UserTo(user, list);
             };
         }
 

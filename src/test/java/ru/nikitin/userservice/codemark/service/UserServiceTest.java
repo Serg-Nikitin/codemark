@@ -9,6 +9,7 @@ import ru.nikitin.userservice.codemark.model.RoleName;
 import ru.nikitin.userservice.codemark.to.UserTo;
 import ru.nikitin.userservice.codemark.utill.exception.NotFoundException;
 
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -47,7 +48,7 @@ class UserServiceTest {
     void createHappyPathWithoutRole() {
         UserTo created = new UserTo(createUser);
         UserTo newUser = service.create(created);
-        created.setRoles(Set.of(RoleName.EMPLOYEE.name()));
+        created.setRoles(List.of(RoleName.EMPLOYEE.name()));
         USER_TO_MATCHER.assertMatch(newUser, created);
     }
 
@@ -63,7 +64,7 @@ class UserServiceTest {
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     void updateHappyPathLotOfRoles() {
-        UserTo update = new UserTo(updated, Set.of(RoleName.DEVELOPER.name(), RoleName.OPERATOR.name()));
+        UserTo update = new UserTo(updated, List.of(RoleName.DEVELOPER.name(), RoleName.OPERATOR.name()));
         UserTo upUser = service.update(update.getLogin(), update);
         USER_TO_MATCHER.assertMatch(upUser, update);
     }
