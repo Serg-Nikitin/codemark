@@ -12,7 +12,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 
-public class UserTo extends ru.nikitin.userservice.codemark.User {
+public class UserTo extends ru.nikitin.userservice.codemark.soap.xml.User {
 
     public UserTo(User user) {
         this(user.getLogin(), user.getName(), user.getPassword());
@@ -103,7 +103,7 @@ public class UserTo extends ru.nikitin.userservice.codemark.User {
         return Objects.hash(login, name, password, roles);
     }
 
-    public static UserTo getToFromRequest(ru.nikitin.userservice.codemark.User user) {
+    public static UserTo getToFromRequest(ru.nikitin.userservice.codemark.soap.xml.User user) {
         return new UserTo(
                 user.getLogin(),
                 user.getName(),
