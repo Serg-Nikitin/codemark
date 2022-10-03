@@ -8,14 +8,17 @@ import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 import ru.nikitin.userservice.codemark.*;
 import ru.nikitin.userservice.codemark.service.UserService;
+import ru.nikitin.userservice.codemark.to.UserTo;
 
-import static ru.nikitin.userservice.codemark.soap.UserServiceConfig.NAME_SPACE_URI;
+import java.util.List;
+
 
 @Endpoint
 public class UserEndpoint {
 
     private final Logger log = LoggerFactory.getLogger(UserEndpoint.class);
 
+    public static final String NAME_SPACE = "http://ru/nikitin/userservice/codemark";
 
     private final UserService service;
 
@@ -23,16 +26,17 @@ public class UserEndpoint {
         this.service = service;
     }
 
-        @PayloadRoot(namespace = NAME_SPACE_URI,
-            localPart = "GetUsersRequest")
-    @ResponsePayload
-    public GetUsersResponse getAll() {
-        GetUsersResponse resp = new GetUsersResponse();
-        resp.getUsers().addAll(service.getAll());
-        return resp;
-    }
 
-    @PayloadRoot(namespace = NAME_SPACE_URI,
+    @PayloadRoot(namespace = NAME_SPACE, localPart = "getUsersRequest")
+    @ResponsePayload
+    public GetUsersResponse getUsers() {
+        GetUsersResponse response = new GetUsersResponse();
+        response.getUsers().addAll(service.getAll());
+
+        return response;
+    }
+}
+   /* @PayloadRoot(namespace = NAME_SPACE_URI,
             localPart = "getUserByLoginRequest")
     @ResponsePayload
     public GetUserByLoginResponse getByLogin(@RequestPayload GetUserByLoginRequest request) {
@@ -71,3 +75,4 @@ public class UserEndpoint {
     }
 
 }
+*/

@@ -15,33 +15,28 @@ import org.springframework.ws.wsdl.wsdl11.DefaultWsdl11Definition;
 import org.springframework.xml.xsd.SimpleXsdSchema;
 import org.springframework.xml.xsd.XsdSchema;
 
+import static ru.nikitin.userservice.codemark.soap.UserEndpoint.NAME_SPACE;
+
 @EnableWs
 @Configuration
-@ComponentScan(UserServiceConfig.NAME_SPACE_URI)
 public class UserServiceConfig extends WsConfigurerAdapter {
     private final static Logger log = LoggerFactory.getLogger(UserServiceConfig.class);
-
-    public static final String NAME_SPACE_URI = "ru/nikitin/userservice/codemark";
-
 
     @Bean
     public ServletRegistrationBean<MessageDispatcherServlet> messageDispatcherServlet(ApplicationContext applicationContext) {
         MessageDispatcherServlet servlet = new MessageDispatcherServlet();
         servlet.setApplicationContext(applicationContext);
         servlet.setTransformWsdlLocations(true);
-        log.info("init messageDispatcherServlet");
         return new ServletRegistrationBean<>(servlet, "/ws/*");
     }
 
-
     @Bean(name = "users")
-    public DefaultWsdl11Definition defaultWsdl11Definition(XsdSchema usersSchema) {
+    public DefaultWsdl11Definition defaultWsdl11Definition(XsdSchema countriesSchema) {
         DefaultWsdl11Definition wsdl11Definition = new DefaultWsdl11Definition();
         wsdl11Definition.setPortTypeName("UsersPort");
         wsdl11Definition.setLocationUri("/ws");
-        wsdl11Definition.setTargetNamespace(NAME_SPACE_URI);
-        wsdl11Definition.setSchema(usersSchema);
-        log.info("init defaultWsdl11Definition");
+        wsdl11Definition.setTargetNamespace(NAME_SPACE);
+        wsdl11Definition.setSchema(countriesSchema);
         return wsdl11Definition;
     }
 
@@ -49,5 +44,4 @@ public class UserServiceConfig extends WsConfigurerAdapter {
     public XsdSchema usersSchema() {
         return new SimpleXsdSchema(new ClassPathResource("static/users.xsd"));
     }
-
 }
