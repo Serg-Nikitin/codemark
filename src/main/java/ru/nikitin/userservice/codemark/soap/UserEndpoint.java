@@ -6,9 +6,7 @@ import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
-import ru.nikitin.userservice.codemark.GetUserByLoginRequest;
-import ru.nikitin.userservice.codemark.GetUserByLoginResponse;
-import ru.nikitin.userservice.codemark.GetUsersResponse;
+import ru.nikitin.userservice.codemark.*;
 import ru.nikitin.userservice.codemark.service.UserService;
 
 
@@ -43,6 +41,17 @@ public class UserEndpoint {
         return resp;
     }
 
+    @PayloadRoot(namespace = NAME_SPACE,
+            localPart = "deleteUserByLoginRequest")
+    @ResponsePayload
+    public DeleteUserByLoginResponse delete(@RequestPayload DeleteUserByLoginRequest request) {
+        String login = request.getLogin();
+        DeleteUserByLoginResponse resp = new DeleteUserByLoginResponse();
+        boolean result = service.deleteUser(request.getLogin());
+        resp.setSuccess(result);
+        return resp;
+    }
+
 }
    /* @PayloadRoot(namespace = NAME_SPACE_URI,
             localPart = "getUserByLoginRequest")
@@ -72,14 +81,6 @@ public class UserEndpoint {
         return resp;
     }
 
-    @PayloadRoot(namespace = NAME_SPACE_URI,
-            localPart = "deleteUserByLoginRequest")
-    @ResponsePayload
-    public DeleteUserByLoginResponse delete(@RequestPayload DeleteUserByLoginRequest request) {
-        String login = request.getLogin();
-        DeleteUserByLoginResponse resp = new DeleteUserByLoginResponse();
 
-        return resp;
-    }
 
 */
