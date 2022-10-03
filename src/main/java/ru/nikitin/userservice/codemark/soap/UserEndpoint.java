@@ -58,24 +58,22 @@ public class UserEndpoint {
             localPart = "createUserRequest")
     @ResponsePayload
     public CreateUserResponse create(@RequestPayload CreateUserRequest request) {
-        UserTo userTo = getToFromRequest(request.getUser()) ;
+        UserTo userTo = getToFromRequest(request.getUser());
         boolean res = service.create(userTo) != null;
         CreateUserResponse resp = new CreateUserResponse();
         resp.setSuccess(res);
         return resp;
     }
 
-}
-   /*
-
-    @PayloadRoot(namespace = NAME_SPACE_URI,
+    @PayloadRoot(namespace = NAME_SPACE,
             localPart = "updateUserRequest")
     @ResponsePayload
     public UpdateUserResponse update(@RequestPayload UpdateUserRequest request) {
+        UserTo userTo = getToFromRequest(request.getUser());
+        boolean res = service.update(request.getLogin(), userTo) != null;
         UpdateUserResponse resp = new UpdateUserResponse();
+        resp.setSuccess(res);
         return resp;
     }
 
-
-
-*/
+}

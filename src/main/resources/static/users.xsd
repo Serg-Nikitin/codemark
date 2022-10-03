@@ -62,6 +62,23 @@
         </xs:complexType>
     </xs:element>
 
+    <xs:element name="updateUserRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="login" type="tns:nameLogin"/>
+                <xs:element name="user" type="tns:user"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="updateUserResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="tns:success"/>
+                <xs:element ref="tns:errors" maxOccurs="unbounded" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
 
     <xs:complexType name="user">
         <xs:sequence>
