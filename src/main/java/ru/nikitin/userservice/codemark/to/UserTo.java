@@ -14,6 +14,9 @@ import java.util.stream.Collectors;
 
 public class UserTo extends ru.nikitin.userservice.codemark.User {
 
+    public UserTo() {
+    }
+
     public UserTo(User user) {
         this(user.getLogin(), user.getName(), user.getPassword());
     }
