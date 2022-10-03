@@ -49,6 +49,7 @@ public class UserTo extends ru.nikitin.userservice.codemark.User {
         try {
             setRole = roles.isEmpty() ? Collections.emptySet() :
                     roles.stream()
+                            .map(String::toUpperCase)
                             .map(RoleName::valueOf)
                             .map(role -> new Role(role.name(), user))
                             .collect(Collectors.toSet());

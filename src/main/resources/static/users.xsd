@@ -1,43 +1,8 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="ru/nikitin/userservice/codemark"
-           targetNamespace="ru/nikitin/userservice/codemark" elementFormDefault="qualified">
-    <!--                 Request            -->
+           targetNamespace="ru/nikitin/userservice/codemark">
+    <!--   GetAll   -->
     <xs:element name="getUsersRequest"/>
-
-    <xs:element name="getUserByLoginRequest">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element nillable="true" name="login" type="xs:string"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="createUserRequest">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="user" type="tns:user"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="updateUserRequest">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="login" type="xs:string"/>
-                <xs:element name="user" type="tns:user"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="deleteUserByLoginRequest">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="login" type="xs:string"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-    <!--                 Request            -->
-
-    <!--                 Response           -->
+    <!--======================================================-->
     <xs:element name="getUsersResponse">
         <xs:complexType>
             <xs:sequence>
@@ -45,7 +10,17 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+    <!--   GetAll   -->
 
+    <!--  getUserByLogin -->
+    <xs:element name="getUserByLoginRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="login" type="tns:nameLogin"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <!--=============================-->
     <xs:element name="getUserByLoginResponse">
         <xs:complexType>
             <xs:sequence>
@@ -53,39 +28,100 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+    <!--  getUserByLogin -->
 
-    <xs:element name="createUserResponse">
+    <!--    DeleteUserByLogin-->
+    <xs:element name="deleteUserByLoginRequest">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="user" type="tns:user"/>
+                <xs:element name="login" type="tns:nameLogin"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-
-    <xs:element name="updateUserResponse">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="user" type="tns:user"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
+    <!--=============================================-->
     <xs:element name="deleteUserByLoginResponse">
         <xs:complexType>
+            <xs:choice>
+                <xs:element name="deleteResponse" type="tns:response"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    <!--    DeleteUserByLogin-->
+
+    <!--    CreateUser-->
+    <xs:element name="createUserRequest">
+        <xs:complexType>
             <xs:sequence>
-                <xs:element name="delete" type="xs:boolean"/>
+                <xs:element name="user" type="tns:user"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+    <!--===========================================-->
+    <xs:element name="createUserResponse">
+        <xs:complexType>
+            <xs:choice>
+                <xs:element name="createResponse" type="tns:response"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    <!--    CreateUser-->
 
-    <!--                 Response           -->
+    <!--UpdateUser-->
+    <xs:element name="updateUserRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="login" type="tns:nameLogin"/>
+                <xs:element name="user" type="tns:user"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <!--=========================================-->
+    <xs:element name="updateUserResponse">
+        <xs:complexType>
+            <xs:choice>
+                <xs:element name="updateResponse" type="tns:response"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    <!--UpdateUser-->
+
     <!--                 Type               -->
-    <xs:complexType name="user">
+
+    <xs:complexType name="response">
         <xs:sequence>
-            <xs:element name="login" type="xs:string"/>
-            <xs:element name="name" type="xs:string"/>
-            <xs:element name="password" type="xs:string"/>
-            <xs:element maxOccurs="unbounded" minOccurs="0" name="roles" nillable="true" type="xs:string"/>
+            <xs:element name="success" type="xs:boolean"/>
+            <xs:element name="errors" minOccurs="0" maxOccurs="unbounded" type="tns:error"/>
         </xs:sequence>
     </xs:complexType>
+
+
+    <xs:simpleType name="error">
+        <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+
+
+    <xs:complexType name="user">
+        <xs:sequence>
+            <xs:element name="login" type="tns:nameLogin"/>
+            <xs:element name="name" type="tns:nameLogin"/>
+            <xs:element name="password" type="tns:password"/>
+            <xs:element name="roles" maxOccurs="unbounded" minOccurs="0" type="tns:role"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="nameLogin">
+        <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="role">
+        <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+
+
+    <xs:simpleType name="password">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[A-Z][0-9]"/>
+        </xs:restriction>
+    </xs:simpleType>
     <!--                 Type              -->
 </xs:schema>

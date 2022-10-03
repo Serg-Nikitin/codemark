@@ -23,12 +23,12 @@ public class UserEndpoint {
         this.service = service;
     }
 
-    @PayloadRoot(namespace = NAME_SPACE_URI,
-            localPart = "getUsersRequest")
+        @PayloadRoot(namespace = NAME_SPACE_URI,
+            localPart = "GetUsersRequest")
     @ResponsePayload
     public GetUsersResponse getAll() {
         GetUsersResponse resp = new GetUsersResponse();
-
+        resp.getUsers().addAll(service.getAll());
         return resp;
     }
 
@@ -37,6 +37,7 @@ public class UserEndpoint {
     @ResponsePayload
     public GetUserByLoginResponse getByLogin(@RequestPayload GetUserByLoginRequest request) {
         GetUserByLoginResponse resp = new GetUserByLoginResponse();
+        String login = request.getLogin();
         return resp;
     }
 
@@ -56,8 +57,6 @@ public class UserEndpoint {
     @ResponsePayload
     public UpdateUserResponse update(@RequestPayload UpdateUserRequest request) {
         UpdateUserResponse resp = new UpdateUserResponse();
-
-
         return resp;
     }
 
