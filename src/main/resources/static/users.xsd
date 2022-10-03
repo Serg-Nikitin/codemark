@@ -6,7 +6,7 @@
     <xs:element name="getUserByLoginRequest">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="login" type="xs:string"/>
+                <xs:element nillable="true" name="login" type="xs:string"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
