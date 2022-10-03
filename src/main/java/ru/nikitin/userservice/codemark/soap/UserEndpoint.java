@@ -6,11 +6,10 @@ import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
-import ru.nikitin.userservice.codemark.*;
+import ru.nikitin.userservice.codemark.GetUserByLoginRequest;
+import ru.nikitin.userservice.codemark.GetUserByLoginResponse;
+import ru.nikitin.userservice.codemark.GetUsersResponse;
 import ru.nikitin.userservice.codemark.service.UserService;
-import ru.nikitin.userservice.codemark.to.UserTo;
-
-import java.util.List;
 
 
 @Endpoint
@@ -32,9 +31,18 @@ public class UserEndpoint {
     public GetUsersResponse getUsers() {
         GetUsersResponse response = new GetUsersResponse();
         response.getUsers().addAll(service.getAll());
-
         return response;
     }
+
+    @PayloadRoot(namespace = NAME_SPACE,
+            localPart = "getUserByLoginRequest")
+    @ResponsePayload
+    public GetUserByLoginResponse getByLogin(@RequestPayload GetUserByLoginRequest request) {
+        GetUserByLoginResponse resp = new GetUserByLoginResponse();
+        resp.setUser(service.getUser(request.getLogin()));
+        return resp;
+    }
+
 }
    /* @PayloadRoot(namespace = NAME_SPACE_URI,
             localPart = "getUserByLoginRequest")
@@ -74,5 +82,4 @@ public class UserEndpoint {
         return resp;
     }
 
-}
 */

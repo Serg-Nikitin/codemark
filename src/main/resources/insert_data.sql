@@ -5,9 +5,9 @@ FROM role;
 
 
 INSERT INTO users
-VALUES ('al', 'Alex', 'alex'),
-       ('yu', 'Yuri', 'yuri'),
-       ('ru', 'Ruslan', 'rus')
+VALUES ('al', 'Alex', 'A1'),
+       ('yu', 'Yuri', 'Y2'),
+       ('ru', 'Ruslan', 'R3')
 ;
 
 INSERT INTO role(role_name, user_login)

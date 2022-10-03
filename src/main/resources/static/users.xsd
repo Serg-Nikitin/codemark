@@ -14,6 +14,24 @@
     </xs:element>
 
 
+
+    <xs:element name="getUserByLoginRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="login" type="tns:nameLogin"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getUserByLoginResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="user" type="tns:user"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
+
     <xs:complexType name="user">
         <xs:sequence>
             <xs:element name="login" type="tns:nameLogin"/>
@@ -34,7 +52,7 @@
 
     <xs:simpleType name="password">
         <xs:restriction base="xs:string">
-            <!--            <xs:pattern value="[A-Z][0-9]"/>-->
+                        <xs:pattern value="[A-Z][0-9]"/>
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>
