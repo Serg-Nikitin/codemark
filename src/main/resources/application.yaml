@@ -1,14 +1,16 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/codemark
-    username: postgres
-    password: postgres
+    #    if you download from github, you need to create a folder with the file-codemark.mv.db
+    url: jdbc:h2:~/db/codemark;AUTO_SERVER=TRUE;OLD_INFORMATION_SCHEMA=TRUE;DATABASE_TO_LOWER=TRUE
+    username:
+    password:
+    driverClassName: org.h2.Driver
   sql:
     init:
       mode: always
       schema-locations: classpath:create_schema.sql
-      data-locations: classpath:insert_data.sql
   jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
     show-sql: true
     open-in-view: false
     properties:

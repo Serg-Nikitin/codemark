@@ -1,11 +1,8 @@
 package ru.nikitin.userservice.codemark.soap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.ws.config.annotation.EnableWs;
@@ -20,7 +17,6 @@ import static ru.nikitin.userservice.codemark.soap.UserEndpoint.NAME_SPACE;
 @EnableWs
 @Configuration
 public class UserServiceConfig extends WsConfigurerAdapter {
-    private final static Logger log = LoggerFactory.getLogger(UserServiceConfig.class);
 
     @Bean
     public ServletRegistrationBean<MessageDispatcherServlet> messageDispatcherServlet(ApplicationContext applicationContext) {

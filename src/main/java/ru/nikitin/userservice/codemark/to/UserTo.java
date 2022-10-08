@@ -5,14 +5,33 @@ import ru.nikitin.userservice.codemark.model.Role;
 import ru.nikitin.userservice.codemark.model.RoleName;
 import ru.nikitin.userservice.codemark.model.User;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.xml.bind.annotation.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static ru.nikitin.userservice.codemark.model.RoleName.set;
 
-public class UserTo extends ru.nikitin.userservice.codemark.User {
+
+public class UserTo {
+
+    @NotBlank(message = "it should not be empty")
+    protected String login;
+
+    @NotBlank(message = "it should not be empty")
+    protected String name;
+
+    @NotBlank(message = "it should not be empty")
+    @Pattern(regexp = "((?=.*\\d)(?=.*[A-Z]).{2,})", message = "must contain an uppercase letter and a number")
+    protected String password;
+
+    @NotNull
+    protected List<String> roles;
 
     public UserTo() {
     }
@@ -50,14 +69,15 @@ public class UserTo extends ru.nikitin.userservice.codemark.User {
         User user = new User(login, name, password);
         Set<Role> setRole;
         try {
-            setRole = roles.isEmpty() ? Collections.emptySet() :
+//            todo check roles contained Set<RoleName>
+            setRole = roles.isEmpty() || !set().contains(roles.get(0)) ? Collections.emptySet() :
                     roles.stream()
                             .map(String::toUpperCase)
                             .map(RoleName::valueOf)
                             .map(role -> new Role(role.name(), user))
                             .collect(Collectors.toSet());
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Throws an exception when converting a String to a Enum RoleName getUserWithSetRole");
+            throw new IllegalArgumentException("Role must be null or match a collection of role");
         }
         return Pair.of(user, setRole);
     }
@@ -107,11 +127,14 @@ public class UserTo extends ru.nikitin.userservice.codemark.User {
         return Objects.hash(login, name, password, roles);
     }
 
-    public static UserTo getToFromRequest(ru.nikitin.userservice.codemark.User user) {
-        return new UserTo(
-                user.getLogin(),
-                user.getName(),
-                user.getPassword(),
-                user.getRoles());
-    }
+/*    public UserWithRoleResponse response() {
+        var user = new UserWithRoleResponse();
+        user.setLogin(login);
+        user.setName(name);
+        user.setPassword(password);
+        user.getRoles().addAll(roles);
+        return user;
+    }*/
+
+
 }

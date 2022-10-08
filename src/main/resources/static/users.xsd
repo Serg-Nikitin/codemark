@@ -1,115 +1,83 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ru/nikitin/userservice/codemark"
-           targetNamespace="http://ru/nikitin/userservice/codemark">
+           targetNamespace="http://ru/nikitin/userservice/codemark" elementFormDefault="qualified">
 
 
-    <xs:element name="getUsersRequest">
+    <xs:element name="getAllRequest">
     </xs:element>
-
-    <xs:element name="getUsersResponse">
+    <xs:element name="getAllResponse">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="users" maxOccurs="unbounded" minOccurs="0" type="tns:user"/>
+                <xs:element name="login" type="xs:string"/>
+                <xs:element name="name" type="xs:string"/>
+                <xs:element name="password" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getUserRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="login" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getUserResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="login" type="xs:string"/>
+                <xs:element name="name" type="xs:string"/>
+                <xs:element name="password" type="xs:string"/>
+                <xs:element name="roles" maxOccurs="unbounded" minOccurs="0" type="xs:string"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
 
 
-    <xs:element name="getUserByLoginRequest">
+
+    <xs:element name="deleteRequest">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="login" type="tns:nameLogin"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="getUserByLoginResponse">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="user" type="tns:user"/>
+                <xs:element name="login" type="xs:string"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
 
-    <xs:element name="deleteUserByLoginRequest">
+    <xs:element name="createRequest">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="login" type="tns:nameLogin"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="deleteUserByLoginResponse">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element ref="tns:success"/>
-                <xs:element ref="tns:errors" maxOccurs="unbounded" minOccurs="0"/>
+                <xs:element name="login" type="xs:string"/>
+                <xs:element name="name" type="xs:string"/>
+                <xs:element name="password" type="xs:string"/>
+                <xs:element name="roles" maxOccurs="unbounded" minOccurs="0" type="xs:string"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
 
-
-    <xs:element name="createUserRequest">
+    <xs:element name="updateRequest">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="user" type="tns:user"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="createUserResponse">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element ref="tns:success"/>
-                <xs:element ref="tns:errors" maxOccurs="unbounded" minOccurs="0"/>
+                <xs:element name="login" type="xs:string"/>
+                <xs:element name="name" type="xs:string"/>
+                <xs:element name="password" type="xs:string"/>
+                <xs:element name="roles" maxOccurs="unbounded" minOccurs="0" type="xs:string"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
 
-    <xs:element name="updateUserRequest">
+    <xs:element name="SuccessResponse">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="login" type="tns:nameLogin"/>
-                <xs:element name="user" type="tns:user"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="updateUserResponse">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element ref="tns:success"/>
-                <xs:element ref="tns:errors" maxOccurs="unbounded" minOccurs="0"/>
+                <xs:element name="success" type="xs:boolean"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
 
-
-    <xs:complexType name="user">
-        <xs:sequence>
-            <xs:element name="login" type="tns:nameLogin"/>
-            <xs:element name="name" type="tns:nameLogin"/>
-            <xs:element name="password" type="tns:password"/>
-            <xs:element name="roles" maxOccurs="unbounded" minOccurs="0" type="tns:role"/>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:simpleType name="nameLogin">
-        <xs:restriction base="xs:string"/>
-    </xs:simpleType>
-
-    <xs:simpleType name="role">
-        <xs:restriction base="xs:string"/>
-    </xs:simpleType>
-
-
-    <xs:simpleType name="password">
-        <xs:restriction base="xs:string">
-            <xs:pattern value="[A-Z][0-9]"/>
-        </xs:restriction>
-    </xs:simpleType>
-
-
-    <xs:element name="success" type="xs:boolean"/>
-    <xs:element name="errors" type="tns:error"/>
-
-
-    <xs:simpleType name="error">
-        <xs:restriction base="xs:string"/>
-    </xs:simpleType>
+    <xs:element name="FailedResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="success" type="xs:boolean"/>
+                <xs:element name="errors" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
 </xs:schema>
