@@ -28,6 +28,7 @@ FROM role;
 INSERT INTO users
 VALUES ('al', 'Alex', 'A1'),
        ('yu', 'Yuri', 'Y2'),
+       ('ve', 'Veronika', 'V4'),
        ('ru', 'Ruslan', 'R3')
 ;
 
