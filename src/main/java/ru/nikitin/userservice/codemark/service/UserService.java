@@ -1,5 +1,6 @@
 package ru.nikitin.userservice.codemark.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -26,6 +27,7 @@ import static ru.nikitin.userservice.codemark.utill.UserUtil.getUserTo;
 import static ru.nikitin.userservice.codemark.utill.UserUtil.getUserWithSetRole;
 
 @Service
+@Slf4j
 @Transactional(readOnly = true)
 @CacheConfig(cacheNames = "logins")
 public class UserService {

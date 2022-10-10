@@ -17,7 +17,7 @@ public class ValidationUtil {
     private ValidationUtil() {
     }
 
-    private static <T> void validate(T bean, Class<?>... groups) {
+    public static <T> void validate(T bean, Class<?>... groups) {
         Set<ConstraintViolation<T>> violations = validator.validate(bean, groups);
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);

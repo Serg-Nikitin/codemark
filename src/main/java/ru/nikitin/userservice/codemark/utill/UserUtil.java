@@ -1,6 +1,7 @@
 package ru.nikitin.userservice.codemark.utill;
 
 import org.springframework.data.util.Pair;
+import ru.nikitin.userservice.codemark.UserXML;
 import ru.nikitin.userservice.codemark.model.Role;
 import ru.nikitin.userservice.codemark.model.RoleName;
 import ru.nikitin.userservice.codemark.model.User;

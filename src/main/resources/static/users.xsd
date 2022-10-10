@@ -7,12 +7,18 @@
     <xs:element name="getAllResponse">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="login" type="xs:string"/>
-                <xs:element name="name" type="xs:string"/>
-                <xs:element name="password" type="xs:string"/>
+                <xs:element minOccurs="0" maxOccurs="unbounded" name="users" type="tns:userXML"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+    <xs:complexType name="userXML">
+        <xs:sequence>
+            <xs:element name="login" type="xs:string"/>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="password" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
 
     <xs:element name="getUserRequest">
         <xs:complexType>
@@ -33,7 +39,6 @@
     </xs:element>
 
 
-
     <xs:element name="deleteRequest">
         <xs:complexType>
             <xs:sequence>
@@ -41,6 +46,14 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+    <xs:element name="deleteResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="success" default="true" type="xs:boolean"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
 
     <xs:element name="createRequest">
         <xs:complexType>
@@ -49,6 +62,13 @@
                 <xs:element name="name" type="xs:string"/>
                 <xs:element name="password" type="xs:string"/>
                 <xs:element name="roles" maxOccurs="unbounded" minOccurs="0" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="createResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="success" default="true" type="xs:boolean"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -63,21 +83,12 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-
-    <xs:element name="SuccessResponse">
+    <xs:element name="updateResponse">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="success" type="xs:boolean"/>
+                <xs:element name="success" default="true" type="xs:boolean"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
 
-    <xs:element name="FailedResponse">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="success" type="xs:boolean"/>
-                <xs:element name="errors" type="xs:string"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
 </xs:schema>
