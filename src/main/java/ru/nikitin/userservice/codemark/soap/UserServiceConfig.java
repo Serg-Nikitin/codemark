@@ -60,6 +60,7 @@ public class UserServiceConfig extends WsConfigurerAdapter {
         Properties errorMappings = new Properties();
         errorMappings.setProperty(ConstraintViolationException.class.getName(), SoapFaultDefinition.SERVER.toString());
         exceptionResolver.setExceptionMappings(errorMappings);
+        exceptionResolver.setOrder(1);
         return exceptionResolver;
     }
 }
