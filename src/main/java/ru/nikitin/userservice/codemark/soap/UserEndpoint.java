@@ -44,7 +44,7 @@ public class UserEndpoint {
     @PayloadRoot(namespace = NAME_SPACE,
             localPart = LOCAL_PART_GET_ALL)
     @ResponsePayload
-    public GetAllResponse getAll() {
+    public GetAllResponse getAll(@RequestPayload GetAllRequest request) {
         GetAllResponse response = new GetAllResponse();
         var list =
                 service.getAll()

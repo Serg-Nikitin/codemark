@@ -3,6 +3,7 @@
 
 
     <xs:element name="getAllRequest">
+        <xs:complexType/>
     </xs:element>
     <xs:element name="getAllResponse">
         <xs:complexType>
