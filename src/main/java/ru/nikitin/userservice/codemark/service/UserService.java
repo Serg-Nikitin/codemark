@@ -32,7 +32,8 @@ import static ru.nikitin.userservice.codemark.utill.UserUtil.getUserWithSetRole;
 @CacheConfig(cacheNames = "logins")
 public class UserService {
 
-    private final static String NOT_FOUND = "User with login = %s, not found";
+    private final static String NOT_FOUND = "User with login = [ %s ], not found";
+    private final static String NOT_DELETE = "User with login = [ %s ], not deleted";
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -76,8 +77,10 @@ public class UserService {
      */
     @Transactional
     @CacheEvict(cacheNames = "logins", allEntries = true)
-    public boolean deleteUser(String login) {
-        return userRepository.deleteByLogin(login) == 1;
+    public void deleteUser(String login) {
+        if (!(userRepository.deleteByLogin(login) == 1)) {
+            throw new NotFoundException(String.format(NOT_DELETE, login));
+        }
     }
 
 

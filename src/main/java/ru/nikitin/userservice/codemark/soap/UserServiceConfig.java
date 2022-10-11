@@ -14,6 +14,7 @@ import org.springframework.ws.transport.http.MessageDispatcherServlet;
 import org.springframework.ws.wsdl.wsdl11.DefaultWsdl11Definition;
 import org.springframework.xml.xsd.SimpleXsdSchema;
 import org.springframework.xml.xsd.XsdSchema;
+import ru.nikitin.userservice.codemark.utill.exception.NotFoundException;
 
 import javax.validation.ConstraintViolationException;
 import java.util.Properties;
@@ -59,6 +60,7 @@ public class UserServiceConfig extends WsConfigurerAdapter {
 
         Properties errorMappings = new Properties();
         errorMappings.setProperty(ConstraintViolationException.class.getName(), SoapFaultDefinition.SERVER.toString());
+        errorMappings.setProperty(NotFoundException.class.getName(), SoapFaultDefinition.SERVER.toString());
         exceptionResolver.setExceptionMappings(errorMappings);
         exceptionResolver.setOrder(1);
         return exceptionResolver;

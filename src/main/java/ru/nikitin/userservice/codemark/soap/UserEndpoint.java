@@ -7,12 +7,9 @@ import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
-import ru.nikitin.userservice.codemark.CreateRequest;
-import ru.nikitin.userservice.codemark.CreateResponse;
-import ru.nikitin.userservice.codemark.GetAllResponse;
+import ru.nikitin.userservice.codemark.*;
 import ru.nikitin.userservice.codemark.service.UserService;
 import ru.nikitin.userservice.codemark.to.UserTo;
-import ru.nikitin.userservice.codemark.utill.exception.NotFoundException;
 import ru.nikitin.userservice.codemark.utill.validation.ValidationUtil;
 
 import java.util.stream.Collectors;
@@ -50,98 +47,64 @@ public class UserEndpoint {
                         .stream()
                         .map(UserTo::convertXml)
                         .collect(Collectors.toList());
-        log.info("list size = " + list.size());
-        throw new NotFoundException("test with getAll and Exception handler");
-//        response.getUsers().addAll(list);
+        log.info("getAll list size = " + list.size());
+        response.getUsers().addAll(list);
+        return response;
     }
 
 
     @PayloadRoot(namespace = NAME_SPACE, localPart = LOCAL_PART_CREATE)
     @ResponsePayload
-    public CreateResponse createUser(@RequestPayload CreateRequest user) {
+    public CreateResponse create(@RequestPayload CreateRequest user) {
         var userTo = new UserTo(user.getLogin(), user.getName(), user.getPassword(), user.getRoles());
         ValidationUtil.validate(userTo);
-        service.create(userTo);
+        UserTo saved = service.create(userTo);
+        log.info("createUser user = " + saved.toString());
+
         var response = new CreateResponse();
         response.setSuccess(true);
         return response;
     }
 
-
-    //    @PayloadRoot(namespace = NAME_SPACE,
-//            localPart = LOCAL_PART_GET_ALL)
- /*   @ResponsePayload
-    @ExceptionHandler(NotFoundException.class)
-    public handleException(RuntimeException e) {
-        log.info("////////////////exception = " + e.getMessage());
-        return ;
-    }
-*/
-
-
-
-/*    @PayloadRoot(namespace = NAME_SPACE,
-            localPart = LOCAL_PART_GET)
+    @PayloadRoot(namespace = NAME_SPACE, localPart = LOCAL_PART_UPDATE)
     @ResponsePayload
-    public JAXBElement get(@RequestPayload GetUserRequest request) {
-        try {
-            service.getUser(request.getLogin());
-            return getSuccess(LOCAL_PART_DELETE);
-        } catch (Exception e) {
-            return getFailed(LOCAL_PART_DELETE, e.getMessage());
-        }
-    }
-
-
-    @PayloadRoot(namespace = NAME_SPACE, localPart = LOCAL_PART_CREATE)
-    @ResponsePayload
-    @Transactional
-    public JAXBElement createUser(@RequestPayload CreateRequest user) {
+    public UpdateResponse update(@RequestPayload UpdateRequest user) {
         var userTo = new UserTo(user.getLogin(), user.getName(), user.getPassword(), user.getRoles());
-        String errors = getErrors(userTo);
-        if (!"".equals(errors)) {
-            return getFailed(errors, LOCAL_PART_UPDATE);
-        }
+        ValidationUtil.validate(userTo);
+        UserTo saved = service.update(userTo);
+        log.info("updateUser user = " + saved.toString());
 
-        try {
-            service.create(userTo);
-            return getSuccess(LOCAL_PART_UPDATE);
-        } catch (Exception e) {
-            return getFailed(e.getMessage(), LOCAL_PART_UPDATE);
-        }
+        var response = new UpdateResponse();
+        response.setSuccess(true);
+        return response;
     }
 
 
-    @PayloadRoot(namespace = NAME_SPACE,
-            localPart = LOCAL_PART_UPDATE)
+    @PayloadRoot(namespace = NAME_SPACE, localPart = LOCAL_PART_GET)
     @ResponsePayload
-    public JAXBElement update(@RequestPayload UpdateRequest user) {
-        var userTo = new UserTo(user.getLogin(), user.getName(), user.getPassword(), user.getRoles());
-        String errors = getErrors(userTo);
-        if (!"".equals(errors)) {
-            return getFailed(errors, LOCAL_PART_UPDATE);
-        }
+    public GetUserResponse getUser(@RequestPayload GetUserRequest request) {
+        String login = request.getLogin();
 
-        try {
-            service.update(userTo.getLogin(), userTo);
-            return getSuccess(LOCAL_PART_UPDATE);
-        } catch (Exception e) {
-            return getFailed(e.getMessage(), LOCAL_PART_UPDATE);
-        }
+        UserTo got = service.getUserWithRole(login);
+        log.info("GetUserWithRoles user = " + got.toString());
+
+        var response = new GetUserResponse();
+        response.setLogin(got.getLogin());
+        response.setName(got.getName());
+        response.setPassword(got.getPassword());
+        response.getRoles().addAll(got.getRoles());
+        return response;
     }
 
 
-    @PayloadRoot(namespace = NAME_SPACE,
-            localPart = LOCAL_PART_DELETE)
+    @PayloadRoot(namespace = NAME_SPACE, localPart = LOCAL_PART_DELETE)
     @ResponsePayload
-    public JAXBElement delete(@RequestPayload DeleteRequest request) {
-        try {
-            service.deleteUser(request.getLogin());
-            return getSuccess(LOCAL_PART_DELETE);
-        } catch (Exception e) {
-            return getFailed(LOCAL_PART_DELETE, e.getMessage());
-        }
-    }
+    public DeleteResponse deleteUser(@RequestPayload DeleteRequest request) {
+        service.deleteUser(request.getLogin());
+        log.info("DeleteUser deleted = ");
 
-    }*/
+        var response = new DeleteResponse();
+        response.setSuccess(true);
+        return response;
+    }
 }
