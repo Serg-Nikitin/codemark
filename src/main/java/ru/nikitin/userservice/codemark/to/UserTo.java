@@ -3,7 +3,6 @@ package ru.nikitin.userservice.codemark.to;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.nikitin.userservice.codemark.UserXML;
 import ru.nikitin.userservice.codemark.model.User;
 
 import javax.validation.constraints.NotBlank;
@@ -41,14 +40,6 @@ public class UserTo {
 
     public UserTo(User user, List<String> strings) {
         this(user.getLogin(), user.getName(), user.getPassword(), strings);
-    }
-
-    public UserXML convertXml() {
-        var userXml = new UserXML();
-        userXml.setLogin(this.getLogin());
-        userXml.setName(this.getName());
-        userXml.setPassword(this.getPassword());
-        return userXml;
     }
 }
 

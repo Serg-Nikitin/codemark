@@ -10,9 +10,13 @@ import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 import ru.nikitin.userservice.codemark.*;
 import ru.nikitin.userservice.codemark.service.UserService;
 import ru.nikitin.userservice.codemark.to.UserTo;
+import ru.nikitin.userservice.codemark.utill.UserUtil;
 import ru.nikitin.userservice.codemark.utill.validation.ValidationUtil;
 
 import java.util.stream.Collectors;
+
+import static ru.nikitin.userservice.codemark.utill.UserUtil.convertUserToGetUserResponse;
+import static ru.nikitin.userservice.codemark.utill.UserUtil.convertXsdToUser;
 
 
 @Endpoint
@@ -45,18 +49,18 @@ public class UserEndpoint {
         var list =
                 service.getAll()
                         .stream()
-                        .map(UserTo::convertXml)
+                        .map(UserUtil::convertUserXsd)
                         .collect(Collectors.toList());
         log.info("getAll list size = " + list.size());
-        response.getUsers().addAll(list);
+        response.getUserXsd().addAll(list);
         return response;
     }
 
 
     @PayloadRoot(namespace = NAME_SPACE, localPart = LOCAL_PART_CREATE)
     @ResponsePayload
-    public CreateResponse create(@RequestPayload CreateRequest user) {
-        var userTo = new UserTo(user.getLogin(), user.getName(), user.getPassword(), user.getRoles());
+    public CreateResponse create(@RequestPayload CreateRequest request) {
+        var userTo = convertXsdToUser(request.getUserWithRoleXsd());
         ValidationUtil.validate(userTo);
         UserTo saved = service.create(userTo);
         log.info("createUser user = " + saved.toString());
@@ -68,8 +72,8 @@ public class UserEndpoint {
 
     @PayloadRoot(namespace = NAME_SPACE, localPart = LOCAL_PART_UPDATE)
     @ResponsePayload
-    public UpdateResponse update(@RequestPayload UpdateRequest user) {
-        var userTo = new UserTo(user.getLogin(), user.getName(), user.getPassword(), user.getRoles());
+    public UpdateResponse update(@RequestPayload UpdateRequest request) {
+        var userTo = convertXsdToUser(request.getUserWithRoleXsd());
         ValidationUtil.validate(userTo);
         UserTo saved = service.update(userTo);
         log.info("updateUser user = " + saved.toString());
@@ -79,7 +83,6 @@ public class UserEndpoint {
         return response;
     }
 
-
     @PayloadRoot(namespace = NAME_SPACE, localPart = LOCAL_PART_GET)
     @ResponsePayload
     public GetUserResponse getUser(@RequestPayload GetUserRequest request) {
@@ -88,12 +91,7 @@ public class UserEndpoint {
         UserTo got = service.getUserWithRole(login);
         log.info("GetUserWithRoles user = " + got.toString());
 
-        var response = new GetUserResponse();
-        response.setLogin(got.getLogin());
-        response.setName(got.getName());
-        response.setPassword(got.getPassword());
-        response.getRoles().addAll(got.getRoles());
-        return response;
+        return convertUserToGetUserResponse(got);
     }
 
 

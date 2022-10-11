@@ -1,7 +1,7 @@
 package ru.nikitin.userservice.codemark.utill;
 
 import org.springframework.data.util.Pair;
-import ru.nikitin.userservice.codemark.UserXML;
+import ru.nikitin.userservice.codemark.*;
 import ru.nikitin.userservice.codemark.model.Role;
 import ru.nikitin.userservice.codemark.model.RoleName;
 import ru.nikitin.userservice.codemark.model.User;
@@ -11,6 +11,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ru.nikitin.userservice.codemark.model.RoleName.set;
 
 public class UserUtil {
 
@@ -35,7 +37,7 @@ public class UserUtil {
 
     private static List<Role> getSetRole(User user, List<String> roles) {
         try {
-            return roles == null || roles.isEmpty() ?
+            return checkRoles(roles) ?
                     Collections.emptyList() :
                     roles.stream()
                             .map(String::toUpperCase)
@@ -43,7 +45,45 @@ public class UserUtil {
                             .map(role -> new Role(role.name(), user))
                             .collect(Collectors.toList());
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Role must be null or match a collection of role");
+            throw new IllegalArgumentException("Role must be match a collection of role");
         }
+    }
+
+    private static boolean checkRoles(List<String> roles) {
+        boolean rolesIsNull = roles == null;
+        boolean rolesIsEmpty = roles.isEmpty();
+        boolean rolesSizeOne = roles.size() == 1;
+        boolean rolesNotContainsSet = !set().contains(roles.get(0));
+        return rolesIsNull || rolesIsEmpty || rolesSizeOne && rolesNotContainsSet;
+    }
+
+    public static UserWithRoleXsd convertToUserRoleXsd(UserTo to) {
+        var userWithRoleXsd = (UserWithRoleXsd) getBaseUser(to, new UserWithRoleXsd());
+        userWithRoleXsd.setListRole(new ListRole());
+        userWithRoleXsd.getListRole().getRole().addAll(to.getRoles());
+        return userWithRoleXsd;
+    }
+
+    public static UserXsd convertUserXsd(UserTo to) {
+        return (UserXsd) getBaseUser(to, new UserXsd());
+    }
+
+    private static BaseUser getBaseUser(UserTo to, BaseUser xsd) {
+        xsd.setLogin(to.getLogin());
+        xsd.setName(to.getName());
+        xsd.setPassword(to.getPassword());
+        return xsd;
+    }
+
+
+    public static GetUserResponse convertUserToGetUserResponse(UserTo to) {
+        var response = new GetUserResponse();
+        response.setUserWithRoleXsd(convertToUserRoleXsd(to));
+        return response;
+    }
+
+
+    public static UserTo convertXsdToUser(UserWithRoleXsd xsd) {
+        return new UserTo(xsd.getLogin(), xsd.getName(), xsd.getPassword(), xsd.getListRole().getRole());
     }
 }

@@ -7,17 +7,10 @@
     <xs:element name="getAllResponse">
         <xs:complexType>
             <xs:sequence>
-                <xs:element minOccurs="0" maxOccurs="unbounded" name="users" type="tns:userXML"/>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:UserXsd"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-    <xs:complexType name="userXML">
-        <xs:sequence>
-            <xs:element name="login" type="xs:string"/>
-            <xs:element name="name" type="xs:string"/>
-            <xs:element name="password" type="xs:string"/>
-        </xs:sequence>
-    </xs:complexType>
 
 
     <xs:element name="getUserRequest">
@@ -30,10 +23,7 @@
     <xs:element name="getUserResponse">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="login" type="xs:string"/>
-                <xs:element name="name" type="xs:string"/>
-                <xs:element name="password" type="xs:string"/>
-                <xs:element name="roles" maxOccurs="unbounded" minOccurs="0" type="xs:string"/>
+                <xs:element ref="tns:UserWithRoleXsd"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -58,10 +48,7 @@
     <xs:element name="createRequest">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="login" type="xs:string"/>
-                <xs:element name="name" type="xs:string"/>
-                <xs:element name="password" type="xs:string"/>
-                <xs:element name="roles" maxOccurs="unbounded" minOccurs="0" type="xs:string"/>
+                <xs:element ref="tns:UserWithRoleXsd"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -76,10 +63,7 @@
     <xs:element name="updateRequest">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="login" type="xs:string"/>
-                <xs:element name="name" type="xs:string"/>
-                <xs:element name="password" type="xs:string"/>
-                <xs:element name="roles" maxOccurs="unbounded" minOccurs="0" type="xs:string"/>
+                <xs:element ref="tns:UserWithRoleXsd"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -87,6 +71,42 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="success" default="true" type="xs:boolean"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="UserWithRoleXsd">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="tns:base_user">
+                    <xs:sequence>
+                        <xs:element ref="tns:listRole"/>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="UserXsd">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="tns:base_user"/>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="base_user">
+        <xs:sequence>
+            <xs:element name="login" type="xs:string"/>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="password" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="listRole">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="role" type="xs:string"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
