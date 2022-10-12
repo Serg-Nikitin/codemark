@@ -7,9 +7,12 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.nikitin.userservice.codemark.model.RoleName;
 import ru.nikitin.userservice.codemark.to.UserTo;
+import ru.nikitin.userservice.codemark.utill.exception.NotFoundException;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.ws.test.server.RequestCreators.withSoapEnvelope;
 import static org.springframework.ws.test.server.ResponseMatchers.payload;
 import static ru.nikitin.userservice.codemark.service.UserServiceTest.*;
@@ -26,7 +29,7 @@ public class UserEndpointTest extends SoapClientForTesting {
     private final static String DELETE_RESPONSE = "deleteResponse";
     private final static String DELETE_REQUEST = "deleteRequest";
     private final static String LOGIN_ALEX = getAlex.getLogin();
-    private final static String LOGIN_CREATED = createUser.getLogin();
+    private final static String LOGIN_CREATED = createUserWithRoles.getLogin();
     private final static UserTo duplicate = new UserTo("al", "Created", "Cr1ads", List.of(RoleName.OPERATOR.name()));
     private final static String ERROR_GET_NOT_FOUND = "Method getUserWithRoles: User with login = [ cr ], not found";
     private final static String ERROR_DUPLICATE = "Method create: User with login = [ al ] already exists";
@@ -38,7 +41,7 @@ public class UserEndpointTest extends SoapClientForTesting {
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void updateShouldReturnFaultMessageNotFound() {
         mockClient
-                .sendRequest(withSoapEnvelope(userRequest(createUser, UPDATE_REQUEST)))
+                .sendRequest(withSoapEnvelope(userRequest(createUserWithRoles, UPDATE_REQUEST)))
                 .andExpect(payload(negativeResponse(ERROR_UPDATE_NOT_FOUND)));
 
     }
@@ -46,12 +49,11 @@ public class UserEndpointTest extends SoapClientForTesting {
     @Test
     @Transactional(propagation = Propagation.NEVER)
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-    public void shouldReturnFaultMessageAlreadyExists() {
+    public void createShouldReturnFaultMessageAlreadyExists() {
         mockClient
                 .sendRequest(withSoapEnvelope(userRequest(duplicate, CREATE_REQUEST)))
                 .andExpect(payload(negativeResponse(ERROR_DUPLICATE)));
     }
-
 
 
     @Test
@@ -79,20 +81,47 @@ public class UserEndpointTest extends SoapClientForTesting {
     @Test
     @Transactional(propagation = Propagation.NEVER)
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-    void create() {
+    void createWithRole() {
         mockClient
-                .sendRequest(withSoapEnvelope(userRequest(createUser, CREATE_REQUEST)))
+                .sendRequest(withSoapEnvelope(userRequest(createUserWithRoles, CREATE_REQUEST)))
                 .andExpect(payload(positiveResponse(CREATE_RESPONSE)));
+
+        assertEquals(createUserWithRoles, service.getUserWithRole(createUserWithRoles.getLogin()));
 
     }
 
     @Test
     @Transactional(propagation = Propagation.NEVER)
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-    void update() {
+    void createWithoutRole() {
+        mockClient
+                .sendRequest(withSoapEnvelope(userRequest(createUserWithoutRoles, CREATE_REQUEST)))
+                .andExpect(payload(positiveResponse(CREATE_RESPONSE)));
+        createUserWithoutRoles.setRoles(List.of(RoleName.EMPLOYEE.name()));
+        assertEquals(createUserWithoutRoles, service.getUserWithRole(createUserWithoutRoles.getLogin()));
+
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    void updateWithRole() {
         mockClient
                 .sendRequest(withSoapEnvelope(userRequest(updateUser, UPDATE_REQUEST)))
                 .andExpect(payload(positiveResponse(UPDATE_RESPONSE)));
+        assertEquals(updateUser, service.getUserWithRole(updateUser.getLogin()));
+
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    void updateWithOutRole() {
+        mockClient
+                .sendRequest(withSoapEnvelope(userRequest(updateYuriWithoutRole, UPDATE_REQUEST)))
+                .andExpect(payload(positiveResponse(UPDATE_RESPONSE)));
+        updateYuriWithoutRole.setRoles(yuriRoles);
+        assertEquals(updateYuriWithoutRole, service.getUserWithRole(updateYuriWithoutRole.getLogin()));
 
     }
 
@@ -104,6 +133,7 @@ public class UserEndpointTest extends SoapClientForTesting {
         mockClient
                 .sendRequest(withSoapEnvelope(byLoginReq(LOGIN_ALEX, DELETE_REQUEST)))
                 .andExpect(payload(positiveResponse(DELETE_RESPONSE)));
+        assertThrows(NotFoundException.class, () -> service.getUserWithRole(LOGIN_ALEX));
     }
 
 

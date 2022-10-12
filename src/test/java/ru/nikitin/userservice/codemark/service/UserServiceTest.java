@@ -3,11 +3,11 @@ package ru.nikitin.userservice.codemark.service;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.nikitin.userservice.codemark.model.RoleName;
 import ru.nikitin.userservice.codemark.to.UserTo;
 import ru.nikitin.userservice.codemark.utill.exception.NotFoundException;
+import ru.nikitin.userservice.codemark.utill.exception.UserLoginException;
 
 import java.util.List;
 
@@ -24,9 +24,12 @@ class UserServiceTest {
     UserService service;
 
     public static UserTo getAlex = new UserTo("al", "Alex", "A1", List.of(RoleName.ANALYST.name(), RoleName.EMPLOYEE.name(), RoleName.LEAD.name()));
-    public static UserTo createUser = new UserTo("cr", "Created", "C5", List.of(RoleName.ADMIN.name()));
+    public static UserTo createUserWithRoles = new UserTo("cr", "Created", "C5", List.of(RoleName.ADMIN.name(), RoleName.OPERATOR.name()));
+    public static UserTo createUserWithoutRoles = new UserTo("cr", "Created", "C5");
     public static UserTo createOnlyUser = new UserTo("cr", "Created", "C5");
-    public static UserTo updateUser = new UserTo("yu", "Updated", "U6", List.of(RoleName.ADMIN.name()));
+    public static UserTo updateUser = new UserTo("yu", "Updated", "U6", List.of(RoleName.ADMIN.name(), RoleName.DEVELOPER.name()));
+    public static List<String> yuriRoles = List.of(RoleName.ADMIN.name(), RoleName.EMPLOYEE.name(), RoleName.OPERATOR.name());
+    public static UserTo updateYuriWithoutRole = new UserTo("yu", "Updated", "U6");
     public static UserTo updateOnlyUser = new UserTo("al", "Updated", "U6");
 
 
@@ -53,8 +56,8 @@ class UserServiceTest {
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     void createWithRoles() {
-        UserTo newUser = service.create(createUser);
-        assertEquals(createUser, newUser);
+        UserTo newUser = service.create(createUserWithRoles);
+        assertEquals(createUserWithRoles, newUser);
     }
 
     @Test
@@ -68,7 +71,7 @@ class UserServiceTest {
 
     @Test
     void createIfExists() {
-        assertThrows(DataIntegrityViolationException.class, () -> service.create(updateUser));
+        assertThrows(UserLoginException.class, () -> service.create(updateUser));
     }
 
 

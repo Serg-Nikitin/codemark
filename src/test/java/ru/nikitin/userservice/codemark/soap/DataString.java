@@ -87,7 +87,7 @@ public class DataString {
 
 
     private static String requestWithRoles(UserTo got) {
-        return prepareRoles(got, "<cod:role>?</cod:role>");
+        return prepareRoles(got, "<cod:role>%s</cod:role>");
 
     }
 

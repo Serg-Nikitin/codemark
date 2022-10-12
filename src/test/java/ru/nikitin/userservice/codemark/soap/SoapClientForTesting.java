@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.ws.test.server.MockWebServiceClient;
+import ru.nikitin.userservice.codemark.service.UserService;
 
 import javax.annotation.PostConstruct;
 
@@ -15,6 +16,9 @@ public class SoapClientForTesting {
 
     @Autowired
     private ApplicationContext applicationContext;
+
+    @Autowired
+    UserService service;
 
     protected MockWebServiceClient mockClient;
 

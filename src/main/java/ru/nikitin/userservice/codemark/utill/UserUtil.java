@@ -53,8 +53,7 @@ public class UserUtil {
         boolean rolesIsNull = roles == null;
         boolean rolesIsEmpty = roles.isEmpty();
         boolean rolesSizeOne = roles.size() == 1;
-        boolean rolesNotContainsSet = !set().contains(roles.get(0));
-        return rolesIsNull || rolesIsEmpty || rolesSizeOne && rolesNotContainsSet;
+        return rolesIsNull || rolesIsEmpty || rolesSizeOne && !set().contains(roles.get(0));
     }
 
     public static UserWithRoleXsd convertToUserRoleXsd(UserTo to) {
@@ -85,9 +84,5 @@ public class UserUtil {
 
     public static UserTo convertXsdWithRoleToUser(UserWithRoleXsd xsd) {
         return new UserTo(xsd.getLogin(), xsd.getName(), xsd.getPassword(), xsd.getListRole().getRole());
-    }
-
-    public static UserTo convertXsdToUser(UserXsd xsd) {
-        return new UserTo(xsd.getLogin(), xsd.getName(), xsd.getPassword());
     }
 }
