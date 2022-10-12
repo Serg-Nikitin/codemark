@@ -17,6 +17,7 @@ import org.springframework.xml.xsd.XsdSchema;
 import ru.nikitin.userservice.codemark.utill.exception.NotFoundException;
 
 import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
 import java.util.Properties;
 
 import static ru.nikitin.userservice.codemark.soap.UserEndpoint.NAME_SPACE;
@@ -59,7 +60,7 @@ public class UserServiceConfig extends WsConfigurerAdapter {
         exceptionResolver.setDefaultFault(faultDefinition);
 
         Properties errorMappings = new Properties();
-        errorMappings.setProperty(ConstraintViolationException.class.getName(), SoapFaultDefinition.SERVER.toString());
+        errorMappings.setProperty(ValidationException.class.getName(), SoapFaultDefinition.SERVER.toString());
         errorMappings.setProperty(NotFoundException.class.getName(), SoapFaultDefinition.SERVER.toString());
         exceptionResolver.setExceptionMappings(errorMappings);
         exceptionResolver.setOrder(1);

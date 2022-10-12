@@ -24,10 +24,10 @@ public class DataString {
         );
     }
 
-    public static Source negativeResponse(String action, String errors) {
-        final String form = "<ns2:%s xmlns:ns2=\"http://ru/nikitin/userservice/codemark\"><success>true</success><errors>%s</errors></ns2:%s>";
+    public static Source negativeResponse(String errors) {
+        final String form = "<SOAP-ENV:Fault xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><faultcode>SOAP-ENV:Server</faultcode><faultstring xml:lang=\"en\">%s</faultstring><detail><success>false</success><errors>%s</errors></detail></SOAP-ENV:Fault>\n";
         return new StringSource(
-                String.format(form, action, errors, action)
+                String.format(form, errors, errors)
         );
     }
 
@@ -70,7 +70,7 @@ public class DataString {
                 "\n<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:cod=\"http://ru/nikitin/userservice/codemark\">\n<soapenv:Header/><soapenv:Body>\n"
         );
         String body = String.format(
-                "     <cod:%s>\n" +
+                        "     <cod:%s>\n" +
                         "         <cod:UserWithRoleXsd>\n" +
                         "            <cod:login>%s</cod:login>\n" +
                         "            <cod:name>%s</cod:name>\n" +

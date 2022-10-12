@@ -62,7 +62,7 @@ public class Roles implements Streamable<Role> {
         @Override
         public Function<HashMap<User, List<String>>, UserTo> finisher() {
             return map -> {
-                User user = map.keySet().stream().findFirst().orElseThrow(() -> new NotFoundException("Streamable Roles not found user"));
+                User user = map.keySet().stream().findFirst().orElseThrow(() -> new NotFoundException("RolesCollector : User not found "));
                 List<String> list = map.get(user).stream().sorted().toList();
                 return new UserTo(user, list);
             };

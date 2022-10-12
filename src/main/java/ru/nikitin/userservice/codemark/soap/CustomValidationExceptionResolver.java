@@ -7,14 +7,14 @@ import org.springframework.ws.soap.SoapFaultDetail;
 import org.springframework.ws.soap.server.endpoint.SoapFaultMappingExceptionResolver;
 
 import javax.xml.namespace.QName;
+import java.util.Arrays;
+import java.util.Comparator;
 
 @Slf4j
 @Component
 public class CustomValidationExceptionResolver extends SoapFaultMappingExceptionResolver {
     private final String SUCCESS = "success";
     private final String ERRORS = "errors";
-
-
 
 
     @Override
@@ -24,7 +24,7 @@ public class CustomValidationExceptionResolver extends SoapFaultMappingException
         SoapFaultDetail detail = fault.addFaultDetail();
         detail.addFaultDetailElement(new QName(SUCCESS)).addText("false");
         detail.addFaultDetailElement(new QName(ERRORS)).addText(ex.getMessage());
-
+        log.info(" details errors  = " + ex.getMessage());
         super.customizeFault(endpoint, ex, fault);
     }
 

@@ -26,7 +26,7 @@ class UserServiceTest {
     public static UserTo getAlex = new UserTo("al", "Alex", "A1", List.of(RoleName.ANALYST.name(), RoleName.EMPLOYEE.name(), RoleName.LEAD.name()));
     public static UserTo createUser = new UserTo("cr", "Created", "C5", List.of(RoleName.ADMIN.name()));
     public static UserTo createOnlyUser = new UserTo("cr", "Created", "C5");
-    public static UserTo updateUser = new UserTo("al", "Updated", "U6", List.of(RoleName.EMPLOYEE.name()));
+    public static UserTo updateUser = new UserTo("yu", "Updated", "U6", List.of(RoleName.ADMIN.name()));
     public static UserTo updateOnlyUser = new UserTo("al", "Updated", "U6");
 
 

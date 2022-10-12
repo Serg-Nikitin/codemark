@@ -17,6 +17,7 @@ import ru.nikitin.userservice.codemark.repository.UserRepository;
 import ru.nikitin.userservice.codemark.to.Roles;
 import ru.nikitin.userservice.codemark.to.UserTo;
 import ru.nikitin.userservice.codemark.utill.exception.NotFoundException;
+import ru.nikitin.userservice.codemark.utill.exception.UserLoginException;
 
 import java.util.Collection;
 import java.util.List;
@@ -34,6 +35,7 @@ public class UserService {
 
     private final static String NOT_FOUND = "User with login = [ %s ], not found";
     private final static String NOT_DELETE = "User with login = [ %s ], not deleted";
+    private final static String DUPLICATE = "User with login = [ %s ] already exists";
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -63,6 +65,10 @@ public class UserService {
      * @return
      */
     public UserTo getUserWithRole(String login) {
+        Assert.notNull(login,"Login must not be null");
+        if (!checkLogin(login)) {
+            throw new NotFoundException(String.format("Method getUserWithRoles: " + NOT_FOUND, login));
+        }
         return roleRepository
                 .getRolesWithUser(login)
                 .orElseThrow(() -> new NotFoundException(String.format(NOT_FOUND, login)))
@@ -78,6 +84,7 @@ public class UserService {
     @Transactional
     @CacheEvict(cacheNames = "logins", allEntries = true)
     public void deleteUser(String login) {
+        Assert.notNull(login,"Login must not be null");
         if (!(userRepository.deleteByLogin(login) == 1)) {
             throw new NotFoundException(String.format(NOT_DELETE, login));
         }
@@ -96,7 +103,9 @@ public class UserService {
         Assert.notNull(to, "When create user, userTo must not be null");
         var pair = getUserWithSetRole(to);
         var user = pair.getFirst();
-        user.setIsNew(checkLogin(to.getLogin()));
+        if (checkLogin(to.getLogin())) {
+            throw new UserLoginException(String.format("Method create: " + DUPLICATE, to.getLogin()));
+        }
         var set = pair.getSecond().isEmpty() ?
                 Set.of(new Role(RoleName.EMPLOYEE.name(), user)) : pair.getSecond();
 
@@ -114,12 +123,14 @@ public class UserService {
      * @return
      */
     @Transactional
-// todo update save new user
     public UserTo update(UserTo to) {
         Assert.notNull(to, "When update user, userTo must not be null");
         var pair = getUserWithSetRole(to);
         var user = pair.getFirst();
-        user.setIsNew(checkLogin(to.getLogin()));
+        if (!checkLogin(to.getLogin())) {
+            throw new NotFoundException(String.format("Method update: " + NOT_FOUND, to.getLogin()));
+        }
+        user.setIsNew(false);
         var set = pair.getSecond();
 
         return set.isEmpty() ? updateUser(user, set) : updateWithRole(user, set);
@@ -131,7 +142,7 @@ public class UserService {
     }
 
     private Boolean checkLogin(String login) {
-        return !getLogins().contains(login);
+        return getLogins().contains(login);
     }
 
     private UserTo updateUser(User user, Collection<Role> set) {
