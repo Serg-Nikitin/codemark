@@ -16,7 +16,7 @@ import ru.nikitin.userservice.codemark.utill.validation.ValidationUtil;
 import java.util.stream.Collectors;
 
 import static ru.nikitin.userservice.codemark.utill.UserUtil.convertUserToGetUserResponse;
-import static ru.nikitin.userservice.codemark.utill.UserUtil.convertXsdToUser;
+import static ru.nikitin.userservice.codemark.utill.UserUtil.convertXsdWithRoleToUser;
 
 
 @Endpoint
@@ -60,7 +60,7 @@ public class UserEndpoint {
     @PayloadRoot(namespace = NAME_SPACE, localPart = LOCAL_PART_CREATE)
     @ResponsePayload
     public CreateResponse create(@RequestPayload CreateRequest request) {
-        var userTo = convertXsdToUser(request.getUserWithRoleXsd());
+        var userTo = convertXsdWithRoleToUser(request.getUserWithRoleXsd());
         ValidationUtil.validate(userTo);
         UserTo saved = service.create(userTo);
         log.info("createUser user = " + saved.toString());
@@ -73,7 +73,7 @@ public class UserEndpoint {
     @PayloadRoot(namespace = NAME_SPACE, localPart = LOCAL_PART_UPDATE)
     @ResponsePayload
     public UpdateResponse update(@RequestPayload UpdateRequest request) {
-        var userTo = convertXsdToUser(request.getUserWithRoleXsd());
+        var userTo = convertXsdWithRoleToUser(request.getUserWithRoleXsd());
         ValidationUtil.validate(userTo);
         UserTo saved = service.update(userTo);
         log.info("updateUser user = " + saved.toString());

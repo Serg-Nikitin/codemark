@@ -14,10 +14,13 @@ public class CustomValidationExceptionResolver extends SoapFaultMappingException
     private final String SUCCESS = "success";
     private final String ERRORS = "errors";
 
+
+
+
     @Override
     protected void customizeFault(Object endpoint, Exception ex, SoapFault fault) {
 
-        log.info("Object endpoint = " + endpoint.getClass().getName());
+        log.info(" customizeFault Object endpoint = " + endpoint.getClass().getName());
         SoapFaultDetail detail = fault.addFaultDetail();
         detail.addFaultDetailElement(new QName(SUCCESS)).addText("false");
         detail.addFaultDetailElement(new QName(ERRORS)).addText(ex.getMessage());

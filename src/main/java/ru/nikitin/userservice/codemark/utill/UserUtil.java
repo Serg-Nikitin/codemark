@@ -83,7 +83,11 @@ public class UserUtil {
     }
 
 
-    public static UserTo convertXsdToUser(UserWithRoleXsd xsd) {
+    public static UserTo convertXsdWithRoleToUser(UserWithRoleXsd xsd) {
         return new UserTo(xsd.getLogin(), xsd.getName(), xsd.getPassword(), xsd.getListRole().getRole());
+    }
+
+    public static UserTo convertXsdToUser(UserXsd xsd) {
+        return new UserTo(xsd.getLogin(), xsd.getName(), xsd.getPassword());
     }
 }
