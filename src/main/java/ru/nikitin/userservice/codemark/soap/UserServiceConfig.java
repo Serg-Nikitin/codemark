@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.ws.config.annotation.EnableWs;
 import org.springframework.ws.config.annotation.WsConfigurerAdapter;
+import org.springframework.ws.server.EndpointInterceptor;
 import org.springframework.ws.soap.server.endpoint.SoapFaultDefinition;
 import org.springframework.ws.soap.server.endpoint.SoapFaultMappingExceptionResolver;
 import org.springframework.ws.transport.http.MessageDispatcherServlet;
@@ -16,8 +17,8 @@ import org.springframework.xml.xsd.SimpleXsdSchema;
 import org.springframework.xml.xsd.XsdSchema;
 import ru.nikitin.userservice.codemark.utill.exception.NotFoundException;
 
-import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
+import java.util.List;
 import java.util.Properties;
 
 import static ru.nikitin.userservice.codemark.soap.UserEndpoint.NAME_SPACE;
@@ -65,5 +66,12 @@ public class UserServiceConfig extends WsConfigurerAdapter {
         exceptionResolver.setExceptionMappings(errorMappings);
         exceptionResolver.setOrder(1);
         return exceptionResolver;
+    }
+
+
+    @Override
+    public void addInterceptors(List<EndpointInterceptor> interceptors) {
+        interceptors.add(new CustomizationResponseEndpointInterceptor());
+        super.addInterceptors(interceptors);
     }
 }
