@@ -5,10 +5,7 @@ import ru.nikitin.userservice.codemark.model.Role;
 import ru.nikitin.userservice.codemark.model.User;
 import ru.nikitin.userservice.codemark.utill.exception.NotFoundException;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
@@ -38,35 +35,36 @@ public class Roles implements Streamable<Role> {
                 .collect(RolesCollector.getUserTo());
     }
 
-    static class RolesCollector implements Collector<Role, HashMap<User, Set<String>>, UserTo> {
+    static class RolesCollector implements Collector<Role, HashMap<User, List<String>>, UserTo> {
 
         public static RolesCollector getUserTo() {
             return new RolesCollector();
         }
 
         @Override
-        public Supplier<HashMap<User, Set<String>>> supplier() {
+        public Supplier<HashMap<User, List<String>>> supplier() {
             return HashMap::new;
         }
 
         @Override
-        public BiConsumer<HashMap<User, Set<String>>, Role> accumulator() {
+        public BiConsumer<HashMap<User, List<String>>, Role> accumulator() {
             return (map, role) -> {
-                map.putIfAbsent(role.getUser(), new HashSet<>());
-                map.get(role.getUser()).add(role.getRole_name());
+                map.putIfAbsent(role.getUser(), new ArrayList<>());
+                map.get(role.getUser()).add(role.getRoleName());
             };
         }
 
         @Override
-        public BinaryOperator<HashMap<User, Set<String>>> combiner() {
+        public BinaryOperator<HashMap<User, List<String>>> combiner() {
             return (map, map2) -> map;
         }
 
         @Override
-        public Function<HashMap<User, Set<String>>, UserTo> finisher() {
+        public Function<HashMap<User, List<String>>, UserTo> finisher() {
             return map -> {
-                User user = map.keySet().stream().findFirst().orElseThrow(() -> new NotFoundException("Streamable Roles not found user"));
-                return new UserTo(user, map.get(user));
+                User user = map.keySet().stream().findFirst().orElseThrow(() -> new NotFoundException("RolesCollector : User not found "));
+                List<String> list = map.get(user).stream().sorted().toList();
+                return new UserTo(user, list);
             };
         }
 

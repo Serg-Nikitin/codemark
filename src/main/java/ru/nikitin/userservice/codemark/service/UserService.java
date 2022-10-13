@@ -1,7 +1,11 @@
 package ru.nikitin.userservice.codemark.service;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.util.Pair;
+import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -10,18 +14,28 @@ import ru.nikitin.userservice.codemark.model.RoleName;
 import ru.nikitin.userservice.codemark.model.User;
 import ru.nikitin.userservice.codemark.repository.RoleRepository;
 import ru.nikitin.userservice.codemark.repository.UserRepository;
+import ru.nikitin.userservice.codemark.to.Roles;
 import ru.nikitin.userservice.codemark.to.UserTo;
-import ru.nikitin.userservice.codemark.utill.exception.CustomLoginException;
 import ru.nikitin.userservice.codemark.utill.exception.NotFoundException;
+import ru.nikitin.userservice.codemark.utill.exception.UserLoginException;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import static ru.nikitin.userservice.codemark.utill.UserUtil.getUserTo;
+import static ru.nikitin.userservice.codemark.utill.UserUtil.getUserWithSetRole;
 
 @Service
+@Slf4j
 @Transactional(readOnly = true)
+@CacheConfig(cacheNames = "logins")
 public class UserService {
 
-    private final static String NOT_FOUND = "User with login = %s, not found";
+    private final static String NOT_FOUND = "User with login = [ %s ], not found";
+    private final static String NOT_DELETE = "User with login = [ %s ], not deleted";
+    private final static String DUPLICATE = "User with login = [ %s ] already exists";
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -35,8 +49,12 @@ public class UserService {
     /**
      * Get a set of users from the database (without Roles)
      */
-    public List<User> getAll() {
-        return userRepository.findAll(Sort.by("login"));
+    public List<UserTo> getAll() {
+        return userRepository
+                .findAll(Sort.by("login"))
+                .stream()
+                .map(UserTo::new)
+                .collect(Collectors.toList());
     }
 
 
@@ -47,6 +65,10 @@ public class UserService {
      * @return
      */
     public UserTo getUserWithRole(String login) {
+        Assert.notNull(login,"Login must not be null");
+        if (!checkLogin(login)) {
+            throw new NotFoundException(String.format("Method getUserWithRoles: " + NOT_FOUND, login));
+        }
         return roleRepository
                 .getRolesWithUser(login)
                 .orElseThrow(() -> new NotFoundException(String.format(NOT_FOUND, login)))
@@ -60,32 +82,35 @@ public class UserService {
      * @return
      */
     @Transactional
-    public boolean deleteUser(String login) {
-        return userRepository.deleteByLogin(login) == 1;
+    @CacheEvict(cacheNames = "logins", allEntries = true)
+    public void deleteUser(String login) {
+        Assert.notNull(login,"Login must not be null");
+        if (!(userRepository.deleteByLogin(login) == 1)) {
+            throw new NotFoundException(String.format(NOT_DELETE, login));
+        }
     }
 
 
     /**
      * Add a new user with roles in the database
      *
-     * @param userTo
+     * @param to
      * @return
      */
     @Transactional
-    public UserTo create(UserTo userTo) {
-        Assert.notNull(userTo, "when create user, userTo must not be null");
-        Pair<User, Set<Role>> pair = userTo.getUserWithSetRole();
-        User user = pair.getFirst();
-        Set<Role> set = pair.getSecond();
-
-        if (set.isEmpty()) {
-            Role role = new Role(RoleName.EMPLOYEE.name(), user);
-            roleRepository.save(role);
-            set = Set.of(role);
-        } else {
-            roleRepository.saveAll(set);
+    @CacheEvict(cacheNames = "logins", allEntries = true)
+    public UserTo create(UserTo to) {
+        Assert.notNull(to, "When create user, userTo must not be null");
+        var pair = getUserWithSetRole(to);
+        var user = pair.getFirst();
+        if (checkLogin(to.getLogin())) {
+            throw new UserLoginException(String.format("Method create: " + DUPLICATE, to.getLogin()));
         }
-        return user.getUserTo(set);
+        var set = pair.getSecond().isEmpty() ?
+                Set.of(new Role(RoleName.EMPLOYEE.name(), user)) : pair.getSecond();
+
+        var streamable = Streamable.of(roleRepository.saveAll(set));
+        return new Roles(streamable).createUserTo();
     }
 
     /**
@@ -94,36 +119,39 @@ public class UserService {
      * the system must update the list of user roles in the database
      * (add new bindings, delete outdated bindings).
      *
-     * @param login
-     * @param userTo
+     * @param to
      * @return
      */
     @Transactional
-    public UserTo update(String login, UserTo userTo) {
-        Assert.notNull(userTo, "when update user, userTo must not be null");
-
-        Pair<User, Set<Role>> pair = userTo.getUserWithSetRole();
-        User user = pair.getFirst();
-        if (!login.equals(user.getLogin())) {
-            throw new CustomLoginException("This login must be equals user.login");
+    public UserTo update(UserTo to) {
+        Assert.notNull(to, "When update user, userTo must not be null");
+        var pair = getUserWithSetRole(to);
+        var user = pair.getFirst();
+        if (!checkLogin(to.getLogin())) {
+            throw new NotFoundException(String.format("Method update: " + NOT_FOUND, to.getLogin()));
         }
-        Set<Role> inPutSet = pair.getSecond();
+        user.setIsNew(false);
+        var set = pair.getSecond();
 
-        /* the user exists in the database so isNew must be false*/
-        user.setIsNew();
-        if (inPutSet.isEmpty()) {
-            userRepository.save(user);
-        } else {
-            deleteUser(user.getLogin());
-            roleRepository.saveAll(inPutSet);
-        }
-        return user.getUserTo(inPutSet);
+        return set.isEmpty() ? updateUser(user, set) : updateWithRole(user, set);
     }
 
-    public UserTo getUser(String login) {
-        return userRepository
-                .findById(login)
-                .orElseThrow(() -> new NotFoundException(String.format(NOT_FOUND, login)))
-                .getUserTo(Set.of());
+    @Cacheable("logins")
+    public Set<String> getLogins() {
+        return userRepository.getAllLogin();
+    }
+
+    private Boolean checkLogin(String login) {
+        return getLogins().contains(login);
+    }
+
+    private UserTo updateUser(User user, Collection<Role> set) {
+        return getUserTo(userRepository.save(user), set);
+    }
+
+    private UserTo updateWithRole(User user, Collection<Role> set) {
+        deleteUser(user.getLogin());
+        var streamable = Streamable.of(roleRepository.saveAll(set));
+        return new Roles(streamable).createUserTo();
     }
 }

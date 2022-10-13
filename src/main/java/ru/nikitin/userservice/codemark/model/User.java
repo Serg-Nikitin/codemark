@@ -1,16 +1,21 @@
 package ru.nikitin.userservice.codemark.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.data.domain.Persistable;
 import ru.nikitin.userservice.codemark.to.UserTo;
 
 import javax.persistence.*;
-import java.util.Collection;
 import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
 public class User implements Persistable<String> {
 
     @Id
@@ -23,14 +28,16 @@ public class User implements Persistable<String> {
     @Transient
     private Boolean isNew = true;
 
-    public User() {
-    }
-
     public User(String login, String name, String password) {
         this.login = login;
         this.name = name;
         this.password = password;
     }
+
+    public User(UserTo to) {
+        this(to.getLogin(), to.getName(), to.getPassword());
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -43,51 +50,6 @@ public class User implements Persistable<String> {
     @Override
     public int hashCode() {
         return Objects.hash(login, name, password);
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "login='" + login + '\'' +
-                ", name='" + name + '\'' +
-                ", password='" + password + '\'' +
-                '}';
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public UserTo getUserTo(Collection<Role> set) {
-        return new UserTo(this, getStrings(set));
-    }
-
-
-    private static Set<String> getStrings(Collection<Role> setRoles) {
-        return setRoles
-                .stream()
-                .map(Role::getRole_name)
-                .collect(Collectors.toSet());
     }
 
     @Override
