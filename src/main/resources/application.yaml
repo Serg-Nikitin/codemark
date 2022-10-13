@@ -1,6 +1,6 @@
 spring:
   datasource:
-    #    if you download from github, you need to create a folder with the file-codemark.mv.db
+    #    if you download from github, you need to create a folder db with the file-codemark.mv.db
     url: jdbc:h2:~/db/codemark;AUTO_SERVER=TRUE;OLD_INFORMATION_SCHEMA=TRUE;DATABASE_TO_LOWER=TRUE
     username:
     password:
