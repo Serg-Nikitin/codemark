@@ -66,14 +66,14 @@ public class UserEndpointTest extends SoapClientForTesting {
     @Test
     void getShouldReturnFaultMessageNotFound() {
         mockClient
-                .sendRequest(withSoapEnvelope(byLoginReq(LOGIN_CREATED, GET_USER_REQUEST)))
+                .sendRequest(withSoapEnvelope(byLoginRequest(LOGIN_CREATED, GET_USER_REQUEST)))
                 .andExpect(payload(negativeResponse(ERROR_GET_NOT_FOUND)));
     }
 
     @Test
     void getUser() {
         mockClient
-                .sendRequest(withSoapEnvelope(byLoginReq(LOGIN_ALEX, GET_USER_REQUEST)))
+                .sendRequest(withSoapEnvelope(byLoginRequest(LOGIN_ALEX, GET_USER_REQUEST)))
                 .andExpect(payload(responseSingleUser(getAlex)));
     }
 
@@ -131,7 +131,7 @@ public class UserEndpointTest extends SoapClientForTesting {
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     void deleteUser() {
         mockClient
-                .sendRequest(withSoapEnvelope(byLoginReq(LOGIN_ALEX, DELETE_REQUEST)))
+                .sendRequest(withSoapEnvelope(byLoginRequest(LOGIN_ALEX, DELETE_REQUEST)))
                 .andExpect(payload(positiveResponse(DELETE_RESPONSE)));
         assertThrows(NotFoundException.class, () -> service.getUserWithRole(LOGIN_ALEX));
     }

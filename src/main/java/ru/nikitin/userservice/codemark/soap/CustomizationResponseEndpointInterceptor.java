@@ -20,7 +20,11 @@ public class CustomizationResponseEndpointInterceptor implements EndpointInterce
 
     @Override
     public boolean handleResponse(MessageContext messageContext, Object o) throws Exception {
-        return true;
+        log.info("handleResponse, remove prefix into body response");
+        SOAPMessage message = ((SaajSoapMessage) messageContext.getResponse()).getSaajMessage();
+        SOAPBody body = message.getSOAPBody();
+        removePrefix(body.getChildElements());
+        return false;
     }
 
 
@@ -31,10 +35,7 @@ public class CustomizationResponseEndpointInterceptor implements EndpointInterce
 
     @Override
     public void afterCompletion(MessageContext messageContext, Object o, Exception e) throws Exception {
-        log.info("afterCompletion, remove prefix into body response");
-        SOAPMessage message = ((SaajSoapMessage) messageContext.getResponse()).getSaajMessage();
-        SOAPBody body = message.getSOAPBody();
-        removePrefix(body.getChildElements());
+
     }
 
     private void removePrefix(Iterator<Node> body) {
